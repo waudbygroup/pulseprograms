@@ -303,16 +303,89 @@ class PRValidator:
             except:
                 pass
         
-        # Check for version number consistency
+        # Check for version number consistency and bumping
         if 'sequence_version' in metadata:
             version = metadata['sequence_version']
+            
             # Basic version format check
             if not re.match(r'^\d+\.\d+\.\d+$', version):
                 result['warnings'].append("Sequence version should follow semantic versioning (e.g., 1.0.0)")
             elif version == "0.0.0":
                 result['warnings'].append("Consider using a proper version number instead of 0.0.0")
+            else:
+                # Check if this is a file update and version needs bumping
+                previous_version = self.get_previous_version(file_path)
+                if previous_version and self.is_file_modified(file_path):
+                    if version == previous_version:
+                        result['warnings'].append(f"File has been modified but version is still {version} - consider bumping to indicate changes")
+                    elif not self.is_version_newer(version, previous_version):
+                        result['warnings'].append(f"Version {version} is not newer than previous version {previous_version}")
+            
+        elif self.is_file_modified(file_path):
+            # File modified but no version field at all
+            result['warnings'].append("File has been modified - consider adding a sequence_version field")
         
         return result
+    
+    def get_previous_version(self, file_path: str) -> Optional[str]:
+        """Get the sequence_version from the previous version of the file in git."""
+        try:
+            # Get the file content from the base branch (main)
+            result = subprocess.run(['git', 'show', f'origin/main:{file_path}'], 
+                                  capture_output=True, text=True)
+            if result.returncode != 0:
+                # File doesn't exist in main branch (new file)
+                return None
+            
+            # Extract metadata from previous version
+            content = result.stdout
+            yaml_pattern = r'^;@\s*(.+)$'
+            yaml_lines = []
+            
+            for line in content.split('\n'):
+                match = re.match(yaml_pattern, line)
+                if match:
+                    yaml_lines.append(match.group(1))
+            
+            if not yaml_lines:
+                return None
+            
+            yaml_content = '\n'.join(yaml_lines)
+            metadata = yaml.safe_load(yaml_content)
+            
+            if isinstance(metadata, dict) and 'sequence_version' in metadata:
+                return metadata['sequence_version']
+            
+        except Exception:
+            pass
+        
+        return None
+    
+    def is_file_modified(self, file_path: str) -> bool:
+        """Check if the file has been modified compared to the base branch."""
+        try:
+            # Compare file with base branch
+            result = subprocess.run(['git', 'diff', '--quiet', f'origin/main...HEAD', '--', file_path], 
+                                  capture_output=True)
+            # Returns 0 if no differences, 1 if differences found
+            return result.returncode != 0
+        except Exception:
+            # If we can't determine, assume it's modified to be safe
+            return True
+    
+    def is_version_newer(self, current_version: str, previous_version: str) -> bool:
+        """Check if current version is newer than previous version using semantic versioning."""
+        try:
+            def parse_version(version_str):
+                return tuple(int(x) for x in version_str.split('.'))
+            
+            current_parts = parse_version(current_version)
+            previous_parts = parse_version(previous_version)
+            
+            return current_parts > previous_parts
+        except Exception:
+            # If we can't parse versions, assume current is newer to avoid false warnings
+            return True
     
     def validate_all_changed_files(self) -> List[Dict[str, Any]]:
         """Validate all changed sequence files."""
