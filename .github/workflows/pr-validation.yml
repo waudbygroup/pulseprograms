@@ -1,0 +1,428 @@
+name: PR Validation
+
+on:
+  pull_request:
+    paths:
+      - 'sequences/**'
+      - 'schemas/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate-pr:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyyaml jsonschema requests
+
+    - name: Create validation script
+      run: |
+        cat > .github/scripts/pr_validator.py << 'EOF'
+        #!/usr/bin/env python3
+        """
+        PR Validation Script - Provides educational feedback and auto-injection suggestions.
+        """
+        import os
+        import re
+        import yaml
+        import json
+        import subprocess
+        from pathlib import Path
+        from datetime import datetime, date
+        from typing import Dict, List, Any, Optional, Tuple
+        from jsonschema import validate, ValidationError
+
+        class PRValidator:
+            def __init__(self):
+                self.repo_info = self.get_repo_info()
+                self.schema = self.load_schema()
+                self.validation_results = []
+                self.suggestions = []
+                
+            def get_repo_info(self) -> Dict[str, str]:
+                """Extract repository information from Git."""
+                try:
+                    # Get repository URL from git remote
+                    result = subprocess.run(['git', 'remote', 'get-url', 'origin'], 
+                                          capture_output=True, text=True)
+                    if result.returncode == 0:
+                        remote_url = result.stdout.strip()
+                        # Convert SSH/HTTPS URL to github.com format
+                        if 'github.com' in remote_url:
+                            repo_path = remote_url.split('github.com')[1].strip('/:').replace('.git', '')
+                            return {
+                                'url': f"github.com/{repo_path}",
+                                'name': repo_path.split('/')[-1]
+                            }
+                except:
+                    pass
+                
+                return {
+                    'url': 'github.com/waudbygroup/pulseprograms',
+                    'name': 'pulseprograms'
+                }
+            
+            def load_schema(self) -> Dict[str, Any]:
+                """Load the current schema."""
+                schema_file = Path("schemas/current")
+                if not schema_file.exists():
+                    schema_file = Path("schemas/v0.0.1.yaml")
+                
+                with open(schema_file, 'r') as f:
+                    return yaml.safe_load(f)
+            
+            def get_changed_files(self) -> List[str]:
+                """Get list of changed sequence files in this PR."""
+                try:
+                    # Get files changed in PR (compared to base branch)
+                    result = subprocess.run(['git', 'diff', '--name-only', 'origin/main...HEAD'], 
+                                          capture_output=True, text=True)
+                    if result.returncode == 0:
+                        changed_files = []
+                        for file in result.stdout.strip().split('\n'):
+                            if file.startswith('sequences/') and not file.endswith('README.md'):
+                                changed_files.append(file)
+                        return changed_files
+                except:
+                    pass
+                
+                # Fallback: check all sequence files
+                sequences_dir = Path("sequences")
+                if sequences_dir.exists():
+                    return [str(f) for f in sequences_dir.iterdir() 
+                           if f.is_file() and f.name != 'README.md']
+                return []
+            
+            def extract_metadata(self, file_path: str) -> Optional[Dict[str, Any]]:
+                """Extract YAML metadata from a sequence file."""
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                    
+                    # Extract YAML metadata
+                    yaml_pattern = r'^;@\s*(.+)$'
+                    yaml_lines = []
+                    
+                    for line in content.split('\n'):
+                        match = re.match(yaml_pattern, line)
+                        if match:
+                            yaml_lines.append(match.group(1))
+                    
+                    if not yaml_lines:
+                        return None
+                    
+                    yaml_content = '\n'.join(yaml_lines)
+                    metadata = yaml.safe_load(yaml_content)
+                    
+                    if not isinstance(metadata, dict):
+                        return None
+                    
+                    # Convert date objects to strings for validation
+                    for key, value in metadata.items():
+                        if isinstance(value, date):
+                            metadata[key] = value.isoformat()
+                    
+                    return metadata
+                    
+                except Exception as e:
+                    return None
+            
+            def generate_auto_suggestions(self, file_path: str, metadata: Optional[Dict[str, Any]]) -> List[str]:
+                """Generate auto-injection suggestions for missing or invalid fields."""
+                suggestions = []
+                file_name = Path(file_path).name
+                
+                if metadata is None:
+                    suggestions.append(f"""
+        **No metadata found in `{file_name}`**
+        
+        Add YAML metadata using `;@` comment prefix:
+        ```bruker
+        ;@ schema_version: "0.0.1"
+        ;@ sequence_version: "0.1.0"
+        ;@ title: {file_name}
+        ;@ authors: [Your Name <email@institution.edu>]
+        ;@ created: {date.today().isoformat()}
+        ;@ last_modified: {date.today().isoformat()}
+        ;@ repository: {self.repo_info['url']}
+        ;@ status: experimental
+        
+        ; Your pulse program code follows...
+        ```
+        """)
+                    return suggestions
+                
+                # Check required fields and suggest defaults
+                required_fields = self.schema.get('required', [])
+                for field in required_fields:
+                    if field not in metadata:
+                        default_value = self.get_default_value(field, file_name)
+                        suggestions.append(f"""
+        **Missing required field: `{field}`**
+        
+        Add to your metadata:
+        ```yaml
+        ;@ {field}: {default_value}
+        ```
+        """)
+                
+                # Suggest improvements for existing fields
+                if 'title' in metadata and metadata['title'] == file_name:
+                    suggestions.append(f"""
+        **Title improvement suggestion**
+        
+        Consider a more descriptive title instead of the filename:
+        ```yaml
+        ;@ title: "Descriptive Sequence Name"
+        ```
+        """)
+                
+                if 'status' in metadata and metadata['status'] == 'experimental':
+                    suggestions.append(f"""
+        **Status field guidance**
+        
+        Current status: `experimental`. Consider updating as your sequence matures:
+        - `experimental`: Early development, may have issues
+        - `beta`: Tested but may need refinement  
+        - `stable`: Production-ready, well-tested
+        - `deprecated`: No longer recommended
+        """)
+                
+                # Suggest optional fields that add value
+                valuable_optional_fields = {
+                    'experiment_type': 'Array of keywords like [hsqc, 2d] for better discoverability',
+                    'nuclei_hint': 'Array of nuclei like [1H, 13C] to help users find relevant sequences',
+                    'description': 'Brief description of what this sequence does and when to use it',
+                    'features': 'Array of feature keywords like [watergate, gradient] for advanced search'
+                }
+                
+                missing_optional = [field for field in valuable_optional_fields.keys() 
+                                  if field not in metadata]
+                
+                if missing_optional:
+                    suggestions.append(f"""
+        **Optional fields that enhance discoverability**
+        
+        Consider adding these optional fields:
+        {chr(10).join([f"- `{field}`: {desc}" for field, desc in valuable_optional_fields.items() if field in missing_optional])}
+        """)
+                
+                return suggestions
+            
+            def get_default_value(self, field: str, file_name: str) -> str:
+                """Get appropriate default value for a field."""
+                defaults = {
+                    'schema_version': '"0.0.1"',
+                    'sequence_version': '"0.1.0"',
+                    'title': f'"{file_name}"',
+                    'authors': '[Your Name <email@institution.edu>]',
+                    'created': f'"{date.today().isoformat()}"',
+                    'last_modified': f'"{date.today().isoformat()}"',
+                    'repository': f'"{self.repo_info["url"]}"',
+                    'status': 'experimental'
+                }
+                return defaults.get(field, '""')
+            
+            def validate_sequence(self, file_path: str) -> Dict[str, Any]:
+                """Validate a single sequence file."""
+                file_name = Path(file_path).name
+                result = {
+                    'file': file_path,
+                    'valid': False,
+                    'errors': [],
+                    'warnings': [],
+                    'suggestions': []
+                }
+                
+                # Extract metadata
+                metadata = self.extract_metadata(file_path)
+                
+                if metadata is None:
+                    result['errors'].append("No YAML metadata found")
+                    result['suggestions'] = self.generate_auto_suggestions(file_path, None)
+                    return result
+                
+                # Validate against schema
+                try:
+                    validate(instance=metadata, schema=self.schema)
+                    result['valid'] = True
+                except ValidationError as e:
+                    result['errors'].append(f"Schema validation failed: {e.message}")
+                
+                # Generate suggestions
+                result['suggestions'] = self.generate_auto_suggestions(file_path, metadata)
+                
+                # Check for common issues and warnings
+                if 'experiment_type' not in metadata:
+                    result['warnings'].append("Missing experiment_type - adds discoverability")
+                
+                if 'description' not in metadata:
+                    result['warnings'].append("Missing description - helps users understand the sequence")
+                
+                return result
+            
+            def validate_all_changed_files(self) -> List[Dict[str, Any]]:
+                """Validate all changed sequence files."""
+                changed_files = self.get_changed_files()
+                results = []
+                
+                for file_path in changed_files:
+                    if os.path.exists(file_path):
+                        result = self.validate_sequence(file_path)
+                        results.append(result)
+                
+                return results
+            
+            def generate_pr_comment(self, results: List[Dict[str, Any]]) -> str:
+                """Generate markdown comment for PR."""
+                if not results:
+                    return """
+        ## 🎉 PR Validation Results
+        
+        No sequence files were changed in this PR.
+        """
+                
+                # Count statistics
+                total_files = len(results)
+                valid_files = sum(1 for r in results if r['valid'])
+                files_with_errors = sum(1 for r in results if r['errors'])
+                files_with_suggestions = sum(1 for r in results if r['suggestions'])
+                
+                comment = f"""
+        ## 🔍 PR Validation Results
+        
+        **Files processed:** {total_files} | **Valid:** {valid_files} | **With errors:** {files_with_errors} | **With suggestions:** {files_with_suggestions}
+        
+        """
+                
+                # Add status for each file
+                for result in results:
+                    file_name = Path(result['file']).name
+                    
+                    if result['valid'] and not result['errors']:
+                        status_icon = "✅"
+                        status_text = "Valid"
+                    else:
+                        status_icon = "❌"
+                        status_text = "Issues found"
+                    
+                    comment += f"### {status_icon} `{file_name}` - {status_text}\n\n"
+                    
+                    # Add errors
+                    if result['errors']:
+                        comment += "**Errors:**\n"
+                        for error in result['errors']:
+                            comment += f"- {error}\n"
+                        comment += "\n"
+                    
+                    # Add warnings
+                    if result['warnings']:
+                        comment += "**Warnings:**\n"
+                        for warning in result['warnings']:
+                            comment += f"- {warning}\n"
+                        comment += "\n"
+                    
+                    # Add suggestions
+                    if result['suggestions']:
+                        comment += "**Suggestions:**\n"
+                        for suggestion in result['suggestions']:
+                            comment += suggestion + "\n"
+                    
+                    comment += "---\n\n"
+                
+                # Add footer with helpful information
+                comment += """
+        ## 📚 Resources
+        
+        - **Schema documentation:** See the [current schema](https://github.com/waudbygroup/pulseprograms/blob/main/schemas/v0.0.1.yaml)
+        - **Contributing guide:** Check [CONTRIBUTING.md](https://github.com/waudbygroup/pulseprograms/blob/main/CONTRIBUTING.md)
+        - **Examples:** Browse existing sequences for annotation patterns
+        
+        💡 **Need help?** Open an issue or check our contributing guidelines for detailed instructions.
+        
+        ---
+        *This validation was performed automatically. The suggestions above are meant to be helpful - not all are required for your PR to be accepted.*
+        """
+                
+                return comment
+
+        def main():
+            validator = PRValidator()
+            results = validator.validate_all_changed_files()
+            comment = validator.generate_pr_comment(results)
+            
+            # Save comment to file for GitHub Action to use
+            with open('pr_comment.md', 'w') as f:
+                f.write(comment)
+            
+            # Print summary
+            total_files = len(results)
+            valid_files = sum(1 for r in results if r['valid'])
+            print(f"Validated {total_files} files. {valid_files} valid, {total_files - valid_files} with issues.")
+            
+            # Exit with error code if there are validation errors (optional - you might want to allow PRs with suggestions)
+            # has_errors = any(r['errors'] for r in results)
+            # if has_errors:
+            #     exit(1)
+
+        if __name__ == "__main__":
+            main()
+        EOF
+
+    - name: Run PR validation
+      run: |
+        python .github/scripts/pr_validator.py
+
+    - name: Post PR comment
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          // Read the generated comment
+          const comment = fs.readFileSync('pr_comment.md', 'utf8');
+          
+          // Get existing comments
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
+          
+          // Look for existing validation comment
+          const botComment = comments.find(comment => 
+            comment.user.type === 'Bot' && 
+            comment.body.includes('🔍 PR Validation Results')
+          );
+          
+          if (botComment) {
+            // Update existing comment
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: comment
+            });
+          } else {
+            // Create new comment
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: comment
+            });
+          }
