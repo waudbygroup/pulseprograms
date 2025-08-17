@@ -280,12 +280,37 @@ class PRValidator:
         # Generate suggestions
         result['suggestions'] = self.generate_auto_suggestions(file_path, metadata)
         
-        # Check for common issues and warnings
-        if 'experiment_type' not in metadata:
+        # Check for common issues and warnings (but avoid duplicating what's in suggestions)
+        suggestions_dict = result['suggestions']
+        key_optional_suggested = suggestions_dict.get('key_optional_fields', {})
+        
+        # Only warn about missing fields if we're not already suggesting them
+        if 'experiment_type' not in metadata and 'experiment_type' not in key_optional_suggested:
             result['warnings'].append("Missing experiment_type - adds discoverability")
         
-        if 'description' not in metadata:
+        if 'description' not in metadata and 'description' not in key_optional_suggested:
             result['warnings'].append("Missing description - helps users understand the sequence")
+        
+        # Check for outdated dates
+        if 'last_modified' in metadata:
+            try:
+                from datetime import datetime
+                last_modified = datetime.fromisoformat(metadata['last_modified'])
+                today = datetime.now()
+                days_old = (today - last_modified).days
+                if days_old > 30:  # Flag if last_modified is more than 30 days old
+                    result['warnings'].append(f"Last modified date is {days_old} days old - consider updating if this sequence has changed")
+            except:
+                pass
+        
+        # Check for version number consistency
+        if 'sequence_version' in metadata:
+            version = metadata['sequence_version']
+            # Basic version format check
+            if not re.match(r'^\d+\.\d+\.\d+$', version):
+                result['warnings'].append("Sequence version should follow semantic versioning (e.g., 1.0.0)")
+            elif version == "0.0.0":
+                result['warnings'].append("Consider using a proper version number instead of 0.0.0")
         
         return result
     
