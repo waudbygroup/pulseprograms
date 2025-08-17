@@ -55,6 +55,13 @@ jobs:
                 
             def get_repo_info(self) -> Dict[str, str]:
                 """Extract repository information from Git."""
+                info = {
+                    'url': 'github.com/waudbygroup/pulseprograms',
+                    'name': 'pulseprograms',
+                    'author_name': 'Your Name',
+                    'author_email': 'email@institution.edu'
+                }
+                
                 try:
                     # Get repository URL from git remote
                     result = subprocess.run(['git', 'remote', 'get-url', 'origin'], 
@@ -64,17 +71,24 @@ jobs:
                         # Convert SSH/HTTPS URL to github.com format
                         if 'github.com' in remote_url:
                             repo_path = remote_url.split('github.com')[1].strip('/:').replace('.git', '')
-                            return {
-                                'url': f"github.com/{repo_path}",
-                                'name': repo_path.split('/')[-1]
-                            }
+                            info['url'] = f"github.com/{repo_path}"
+                            info['name'] = repo_path.split('/')[-1]
+                    
+                    # Get contributor's git config
+                    name_result = subprocess.run(['git', 'config', 'user.name'], 
+                                               capture_output=True, text=True)
+                    if name_result.returncode == 0 and name_result.stdout.strip():
+                        info['author_name'] = name_result.stdout.strip()
+                    
+                    email_result = subprocess.run(['git', 'config', 'user.email'], 
+                                                capture_output=True, text=True)
+                    if email_result.returncode == 0 and email_result.stdout.strip():
+                        info['author_email'] = email_result.stdout.strip()
+                    
                 except:
                     pass
                 
-                return {
-                    'url': 'github.com/waudbygroup/pulseprograms',
-                    'name': 'pulseprograms'
-                }
+                return info
             
             def load_schema(self) -> Dict[str, Any]:
                 """Load the current schema."""
@@ -141,85 +155,69 @@ jobs:
                 except Exception as e:
                     return None
             
-            def generate_auto_suggestions(self, file_path: str, metadata: Optional[Dict[str, Any]]) -> List[str]:
-                """Generate auto-injection suggestions for missing or invalid fields."""
-                suggestions = []
+            def generate_auto_suggestions(self, file_path: str, metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+                """Generate consolidated auto-injection suggestions."""
                 file_name = Path(file_path).name
-                
-                if metadata is None:
-                    suggestions.append(f"""
-        **No metadata found in `{file_name}`**
-        
-        Add YAML metadata using `;@` comment prefix:
-        ```bruker
-        ;@ schema_version: "0.0.1"
-        ;@ sequence_version: "0.1.0"
-        ;@ title: {file_name}
-        ;@ authors: [Your Name <email@institution.edu>]
-        ;@ created: {date.today().isoformat()}
-        ;@ last_modified: {date.today().isoformat()}
-        ;@ repository: {self.repo_info['url']}
-        ;@ status: experimental
-        
-        ; Your pulse program code follows...
-        ```
-        """)
-                    return suggestions
-                
-                # Check required fields and suggest defaults
-                required_fields = self.schema.get('required', [])
-                for field in required_fields:
-                    if field not in metadata:
-                        default_value = self.get_default_value(field, file_name)
-                        suggestions.append(f"""
-        **Missing required field: `{field}`**
-        
-        Add to your metadata:
-        ```yaml
-        ;@ {field}: {default_value}
-        ```
-        """)
-                
-                # Suggest improvements for existing fields
-                if 'title' in metadata and metadata['title'] == file_name:
-                    suggestions.append(f"""
-        **Title improvement suggestion**
-        
-        Consider a more descriptive title instead of the filename:
-        ```yaml
-        ;@ title: "Descriptive Sequence Name"
-        ```
-        """)
-                
-                if 'status' in metadata and metadata['status'] == 'experimental':
-                    suggestions.append(f"""
-        **Status field guidance**
-        
-        Current status: `experimental`. Consider updating as your sequence matures:
-        - `experimental`: Early development, may have issues
-        - `beta`: Tested but may need refinement  
-        - `stable`: Production-ready, well-tested
-        - `deprecated`: No longer recommended
-        """)
-                
-                # Suggest optional fields that add value
-                valuable_optional_fields = {
-                    'experiment_type': 'Array of keywords like [hsqc, 2d] for better discoverability',
-                    'nuclei_hint': 'Array of nuclei like [1H, 13C] to help users find relevant sequences',
-                    'description': 'Brief description of what this sequence does and when to use it',
-                    'features': 'Array of feature keywords like [watergate, gradient] for advanced search'
+                suggestions = {
+                    'missing_required': [],
+                    'suggested_metadata': {},
+                    'improvements': [],
+                    'optional_recommendations': []
                 }
                 
-                missing_optional = [field for field in valuable_optional_fields.keys() 
-                                  if field not in metadata]
+                if metadata is None:
+                    # Complete metadata template for files with no annotations
+                    complete_template = {
+                        'schema_version': '"0.0.1"',
+                        'sequence_version': '"0.1.0"',
+                        'title': f'"{file_name}"',
+                        'authors': f'[{self.repo_info["author_name"]} <{self.repo_info["author_email"]}>]',
+                        'created': f'"{date.today().isoformat()}"',
+                        'last_modified': f'"{date.today().isoformat()}"',
+                        'repository': f'"{self.repo_info["url"]}"',
+                        'status': 'experimental'
+                    }
+                    
+                    suggestions['complete_template'] = complete_template
+                    return suggestions
+                
+                # Check for missing required fields
+                required_fields = self.schema.get('required', [])
+                missing_required = []
+                suggested_additions = {}
+                
+                for field in required_fields:
+                    if field not in metadata:
+                        missing_required.append(field)
+                        suggested_additions[field] = self.get_default_value(field, file_name)
+                
+                suggestions['missing_required'] = missing_required
+                suggestions['suggested_metadata'] = suggested_additions
+                
+                # Field improvements
+                if 'title' in metadata and metadata['title'] == file_name:
+                    suggestions['improvements'].append({
+                        'field': 'title',
+                        'current': metadata['title'],
+                        'suggestion': 'Consider a more descriptive title',
+                        'example': '"Descriptive Sequence Name"'
+                    })
+                
+                # Optional field recommendations
+                valuable_optional_fields = {
+                    'experiment_type': '[hsqc, 2d]',
+                    'nuclei_hint': '[1H, 13C]', 
+                    'description': '"Brief description of what this sequence does"',
+                    'features': '[watergate, gradient]'
+                }
+                
+                missing_optional = {}
+                for field, example in valuable_optional_fields.items():
+                    if field not in metadata:
+                        missing_optional[field] = example
                 
                 if missing_optional:
-                    suggestions.append(f"""
-        **Optional fields that enhance discoverability**
-        
-        Consider adding these optional fields:
-        {chr(10).join([f"- `{field}`: {desc}" for field, desc in valuable_optional_fields.items() if field in missing_optional])}
-        """)
+                    suggestions['optional_recommendations'] = missing_optional
                 
                 return suggestions
             
@@ -229,7 +227,7 @@ jobs:
                     'schema_version': '"0.0.1"',
                     'sequence_version': '"0.1.0"',
                     'title': f'"{file_name}"',
-                    'authors': '[Your Name <email@institution.edu>]',
+                    'authors': f'[{self.repo_info["author_name"]} <{self.repo_info["author_email"]}>]',
                     'created': f'"{date.today().isoformat()}"',
                     'last_modified': f'"{date.today().isoformat()}"',
                     'repository': f'"{self.repo_info["url"]}"',
@@ -288,7 +286,7 @@ jobs:
                 return results
             
             def generate_pr_comment(self, results: List[Dict[str, Any]]) -> str:
-                """Generate markdown comment for PR."""
+                """Generate markdown comment for PR with consolidated suggestions."""
                 if not results:
                     return """
         ## 🎉 PR Validation Results
@@ -312,50 +310,86 @@ jobs:
                 # Add status for each file
                 for result in results:
                     file_name = Path(result['file']).name
+                    suggestions = result.get('suggestions', {})
                     
                     if result['valid'] and not result['errors']:
                         status_icon = "✅"
                         status_text = "Valid"
                     else:
-                        status_icon = "❌"
+                        status_icon = "❌" 
                         status_text = "Issues found"
                     
                     comment += f"### {status_icon} `{file_name}` - {status_text}\n\n"
                     
                     # Add errors
                     if result['errors']:
-                        comment += "**Errors:**\n"
+                        comment += "**❌ Errors:**\n"
                         for error in result['errors']:
                             comment += f"- {error}\n"
                         comment += "\n"
                     
                     # Add warnings
                     if result['warnings']:
-                        comment += "**Warnings:**\n"
+                        comment += "**⚠️ Warnings:**\n"
                         for warning in result['warnings']:
                             comment += f"- {warning}\n"
                         comment += "\n"
                     
-                    # Add suggestions
-                    if result['suggestions']:
-                        comment += "**Suggestions:**\n"
-                        for suggestion in result['suggestions']:
-                            comment += suggestion + "\n"
+                    # Handle complete template for files with no metadata
+                    if 'complete_template' in suggestions:
+                        comment += "**📝 Add Complete Metadata (Copy & Paste Ready):**\n\n"
+                        comment += "```yaml\n"
+                        for field, value in suggestions['complete_template'].items():
+                            comment += f";@ {field}: {value}\n"
+                        comment += "```\n\n"
+                    
+                    # Handle missing required fields
+                    elif suggestions.get('missing_required'):
+                        missing_fields = suggestions['missing_required']
+                        suggested_metadata = suggestions.get('suggested_metadata', {})
+                        
+                        comment += f"**📋 Missing Required Fields ({len(missing_fields)}):**\n"
+                        comment += f"Add these to your existing metadata:\n\n"
+                        comment += "```yaml\n"
+                        for field in missing_fields:
+                            value = suggested_metadata.get(field, '""')
+                            comment += f";@ {field}: {value}\n"
+                        comment += "```\n\n"
+                    
+                    # Handle field improvements
+                    if suggestions.get('improvements'):
+                        comment += "**✨ Suggested Improvements:**\n"
+                        for improvement in suggestions['improvements']:
+                            comment += f"- **{improvement['field']}**: {improvement['suggestion']}\n"
+                            comment += f"  ```yaml\n  ;@ {improvement['field']}: {improvement['example']}\n  ```\n"
+                        comment += "\n"
+                    
+                    # Handle optional recommendations
+                    if suggestions.get('optional_recommendations'):
+                        optional_fields = suggestions['optional_recommendations']
+                        comment += f"**💡 Optional Fields for Better Discoverability:**\n"
+                        comment += f"Consider adding these to enhance searchability:\n\n"
+                        comment += "```yaml\n"
+                        for field, example in optional_fields.items():
+                            comment += f";@ {field}: {example}\n"
+                        comment += "```\n\n"
                     
                     comment += "---\n\n"
                 
                 # Add footer with helpful information
-                comment += """
+                comment += f"""
         ## 📚 Resources
         
-        - **Schema documentation:** See the [current schema](https://github.com/waudbygroup/pulseprograms/blob/main/schemas/v0.0.1.yaml)
-        - **Contributing guide:** Check [CONTRIBUTING.md](https://github.com/waudbygroup/pulseprograms/blob/main/CONTRIBUTING.md)
+        - **Schema documentation:** See the [current schema](https://github.com/{self.repo_info['name']}/blob/main/schemas/v0.0.1.yaml)
+        - **Contributing guide:** Check [CONTRIBUTING.md](https://github.com/{self.repo_info['name']}/blob/main/CONTRIBUTING.md)
         - **Examples:** Browse existing sequences for annotation patterns
         
         💡 **Need help?** Open an issue or check our contributing guidelines for detailed instructions.
         
         ---
         *This validation was performed automatically. The suggestions above are meant to be helpful - not all are required for your PR to be accepted.*
+        
+        **Detected contributor:** {self.repo_info['author_name']} <{self.repo_info['author_email']}>
         """
                 
                 return comment
