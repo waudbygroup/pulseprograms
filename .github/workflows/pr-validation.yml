@@ -93,14 +93,11 @@ jobs:
                                     user_data = response.json()
                                     if user_data.get('email'):
                                         info['author_email'] = user_data['email']
-                                    elif user_data.get('name'):
+                                    if user_data.get('name'):
                                         info['author_name'] = user_data['name']
-                                        # Use GitHub username as email fallback
-                                        info['author_email'] = f"{pr_author}@users.noreply.github.com"
-                                    else:
-                                        info['author_email'] = f"{pr_author}@users.noreply.github.com"
+                                    # Don't set a fake email if we can't get a real one
                             except:
-                                info['author_email'] = f"{pr_author}@users.noreply.github.com"
+                                pass  # Keep defaults
                     
                     # Fallback: try git config (won't work in CI but good for local testing)
                     if info['author_name'] == 'Your Name':
@@ -197,11 +194,21 @@ jobs:
                 
                 if metadata is None:
                     # Complete metadata template for files with no annotations
+                    author_name = self.repo_info["author_name"]
+                    author_email = self.repo_info["author_email"]
+                    
+                    if author_email != 'email@institution.edu':
+                        # We have a real email
+                        authors_value = f'[{author_name} <{author_email}>]'
+                    else:
+                        # No real email, just use name
+                        authors_value = f'[{author_name}]'
+                    
                     complete_template = {
                         'schema_version': '"0.0.1"',
                         'sequence_version': '"0.1.0"',
                         'title': f'"{file_name}"',
-                        'authors': f'[{self.repo_info["author_name"]} <{self.repo_info["author_email"]}>]',
+                        'authors': authors_value,
                         'created': f'"{date.today().isoformat()}"',
                         'last_modified': f'"{date.today().isoformat()}"',
                         'repository': f'"{self.repo_info["url"]}"',
@@ -253,11 +260,22 @@ jobs:
             
             def get_default_value(self, field: str, file_name: str) -> str:
                 """Get appropriate default value for a field."""
+                # Handle authors field specially based on available info
+                if field == 'authors':
+                    author_name = self.repo_info["author_name"]
+                    author_email = self.repo_info["author_email"]
+                    
+                    if author_email != 'email@institution.edu':
+                        # We have a real email
+                        return f'[{author_name} <{author_email}>]'
+                    else:
+                        # No real email, just use name
+                        return f'[{author_name}]'
+                
                 defaults = {
                     'schema_version': '"0.0.1"',
                     'sequence_version': '"0.1.0"',
                     'title': f'"{file_name}"',
-                    'authors': f'[{self.repo_info["author_name"]} <{self.repo_info["author_email"]}>]',
                     'created': f'"{date.today().isoformat()}"',
                     'last_modified': f'"{date.today().isoformat()}"',
                     'repository': f'"{self.repo_info["url"]}"',
