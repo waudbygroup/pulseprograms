@@ -321,8 +321,8 @@ class PRValidator:
                     elif not self.is_version_newer(version, previous_version):
                         result['warnings'].append(f"Version {version} is not newer than previous version {previous_version}")
             
-        elif self.is_file_modified(file_path):
-            # File modified but no version field at all
+        elif self.is_file_modified(file_path) and 'sequence_version' not in suggestions_dict.get('missing_required', []):
+            # File modified but no version field at all - only warn if not already suggesting it
             result['warnings'].append("File has been modified - consider adding a sequence_version field")
         
         return result
