@@ -43,8 +43,9 @@ properties:
           pattern: "^[^<]+<[^>]+>$"
           description: "Author name with email: 'Name <email@domain.com>'"
         - type: string
+          pattern: "^[^<>]+$"
           minLength: 1
-          description: "Author name only"
+          description: "Author name only (no email)"
     minItems: 1
     description: "List of sequence authors"
     
