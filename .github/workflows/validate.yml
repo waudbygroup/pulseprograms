@@ -1,4 +1,3 @@
-# GitHub Actions workflow for validating pulse sequence submissions
 name: Validate Sequences
 
 on:
@@ -24,113 +23,13 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'
+        python-version: '3.11'
         
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pyyaml jsonschema
         
-    - name: Validate YAML syntax
+    - name: Run sequence validation
       run: |
-        echo "Validating YAML syntax in sequence files..."
-        find sequences -type f -exec python -c "
-        import sys, yaml, re
-        
-        def extract_yaml_metadata(filepath):
-            with open(filepath, 'r') as f:
-                content = f.read()
-            
-            # Extract lines starting with ';@'
-            yaml_lines = []
-            for line in content.split('\n'):
-                if line.strip().startswith(';@'):
-                    yaml_lines.append(line.strip()[2:].strip())
-            
-            if not yaml_lines:
-                return None
-                
-            yaml_content = '\n'.join(yaml_lines)
-            try:
-                return yaml.safe_load(yaml_content)
-            except yaml.YAMLError as e:
-                print(f'YAML syntax error in {filepath}: {e}')
-                sys.exit(1)
-        
-        extract_yaml_metadata('{}')
-        " {} \;
-        
-    - name: Validate against schema
-      run: |
-        echo "Validating sequences against schema..."
-        python -c "
-        import os, sys, yaml, json
-        from jsonschema import validate, ValidationError
-        import re
-        
-        def extract_yaml_metadata(filepath):
-            from datetime import date
-            with open(filepath, 'r') as f:
-                content = f.read()
-            
-            yaml_lines = []
-            for line in content.split('\n'):
-                if line.strip().startswith(';@'):
-                    yaml_lines.append(line.strip()[2:].strip())
-            
-            if not yaml_lines:
-                return None
-                
-            yaml_content = '\n'.join(yaml_lines)
-            metadata = yaml.safe_load(yaml_content)
-            
-            # Convert date objects to strings for JSON schema validation
-            if metadata:
-                for key, value in metadata.items():
-                    if isinstance(value, date):
-                        metadata[key] = value.isoformat()
-            
-            return metadata
-        
-        # Load current schema
-        with open('schemas/current', 'r') as f:
-            schema_content = yaml.safe_load(f)
-        
-        # Find all sequence files
-        error_count = 0
-        for root, dirs, files in os.walk('sequences'):
-            for file in files:
-                if not file.startswith('.') and file != 'README.md':
-                    filepath = os.path.join(root, file)
-                    metadata = extract_yaml_metadata(filepath)
-                    
-                    if metadata is None:
-                        print(f'Warning: No metadata found in {filepath}')
-                        continue
-                    
-                    try:
-                        validate(instance=metadata, schema=schema_content)
-                        print(f'✓ {filepath} - Valid')
-                    except ValidationError as e:
-                        print(f'✗ {filepath} - Invalid: {e.message}')
-                        error_count += 1
-        
-        if error_count > 0:
-            print(f'\nValidation failed: {error_count} files have errors')
-            sys.exit(1)
-        else:
-            print('\nAll sequences validated successfully!')
-        "
-        
-    - name: Check file naming conventions
-      run: |
-        echo "Checking file naming conventions..."
-        find sequences -type f ! -name 'README.md' ! -name '.*' | while read file; do
-          basename=$(basename "$file")
-          if [[ ! "$basename" =~ ^[a-zA-Z0-9_.-]+$ ]]; then
-            echo "❌ Invalid filename: $file (should contain only letters, numbers, underscores, dots, and hyphens)"
-            exit 1
-          else
-            echo "✓ $file - Valid filename"
-          fi
-        done
+        python .github/scripts/sequence_validator.py
