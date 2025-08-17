@@ -191,16 +191,23 @@ jobs:
         For complete guidelines, see the [CONTRIBUTING.md](https://github.com/waudbygroup/pulseprograms/blob/main/CONTRIBUTING.md) file in the repository.
         EOF
 
-    - name: Copy documentation generation scripts
-      run: |
-        cp .github/scripts/generate_docs.py docs-generated/
-        cp .github/scripts/generate_schema_docs.py docs-generated/
-
     - name: Run documentation generation
       run: |
-        cd docs-generated
-        python generate_docs.py
-        python generate_schema_docs.py
+        # Debug: show current directory and contents
+        echo "Current directory: $(pwd)"
+        echo "Directory contents:"
+        ls -la
+        echo "Sequences directory:"
+        ls -la sequences/ || echo "sequences/ directory not found"
+        
+        # Run from repository root so scripts can find the sequences/ directory
+        echo "Running documentation generation scripts..."
+        python .github/scripts/generate_docs.py
+        python .github/scripts/generate_schema_docs.py
+        
+        # Show what was generated
+        echo "Generated documentation files:"
+        find docs-generated/docs -name "*.md" -type f || echo "No markdown files found"
 
     - name: Setup Pages
       uses: actions/configure-pages@v3
