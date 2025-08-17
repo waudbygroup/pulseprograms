@@ -89,6 +89,8 @@ jobs:
           - toc:
               permalink: true
 
+        docs_dir: '.'
+        
         nav:
           - Home: index.md
           - Database: database.md
