@@ -1,0 +1,6 @@
+;@ schema_version: "0.0.1"
+;@ title: test_sequence
+
+; This is a minimal sequence for testing PR validation
+"p1=4u"
+"d1=1s"
