@@ -54,7 +54,7 @@ jobs:
                 self.suggestions = []
                 
             def get_repo_info(self) -> Dict[str, str]:
-                """Extract repository information from Git."""
+                """Extract repository information from Git and GitHub."""
                 info = {
                     'url': 'github.com/waudbygroup/pulseprograms',
                     'name': 'pulseprograms',
@@ -74,16 +74,46 @@ jobs:
                             info['url'] = f"github.com/{repo_path}"
                             info['name'] = repo_path.split('/')[-1]
                     
-                    # Get contributor's git config
-                    name_result = subprocess.run(['git', 'config', 'user.name'], 
-                                               capture_output=True, text=True)
-                    if name_result.returncode == 0 and name_result.stdout.strip():
-                        info['author_name'] = name_result.stdout.strip()
+                    # Try to get contributor info from environment variables (GitHub Actions context)
+                    pr_author = os.environ.get('PR_AUTHOR')
+                    if pr_author:
+                        info['author_name'] = pr_author
+                        
+                        # Try to get email from GitHub API
+                        github_token = os.environ.get('GITHUB_TOKEN')
+                        if github_token:
+                            try:
+                                import requests
+                                headers = {
+                                    'Authorization': f'token {github_token}',
+                                    'Accept': 'application/vnd.github.v3+json'
+                                }
+                                response = requests.get(f'https://api.github.com/users/{pr_author}', headers=headers)
+                                if response.status_code == 200:
+                                    user_data = response.json()
+                                    if user_data.get('email'):
+                                        info['author_email'] = user_data['email']
+                                    elif user_data.get('name'):
+                                        info['author_name'] = user_data['name']
+                                        # Use GitHub username as email fallback
+                                        info['author_email'] = f"{pr_author}@users.noreply.github.com"
+                                    else:
+                                        info['author_email'] = f"{pr_author}@users.noreply.github.com"
+                            except:
+                                info['author_email'] = f"{pr_author}@users.noreply.github.com"
                     
-                    email_result = subprocess.run(['git', 'config', 'user.email'], 
-                                                capture_output=True, text=True)
-                    if email_result.returncode == 0 and email_result.stdout.strip():
-                        info['author_email'] = email_result.stdout.strip()
+                    # Fallback: try git config (won't work in CI but good for local testing)
+                    if info['author_name'] == 'Your Name':
+                        name_result = subprocess.run(['git', 'config', 'user.name'], 
+                                                   capture_output=True, text=True)
+                        if name_result.returncode == 0 and name_result.stdout.strip():
+                            info['author_name'] = name_result.stdout.strip()
+                    
+                    if info['author_email'] == 'email@institution.edu':
+                        email_result = subprocess.run(['git', 'config', 'user.email'], 
+                                                    capture_output=True, text=True)
+                        if email_result.returncode == 0 and email_result.stdout.strip():
+                            info['author_email'] = email_result.stdout.strip()
                     
                 except:
                     pass
@@ -418,6 +448,10 @@ jobs:
         EOF
 
     - name: Run PR validation
+      env:
+        PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        PR_AUTHOR_EMAIL: ${{ github.event.pull_request.user.email }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         python .github/scripts/pr_validator.py
 
