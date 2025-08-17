@@ -37,8 +37,8 @@ jobs:
     - name: Create directories
       run: |
         mkdir -p .github/scripts
-        mkdir -p docs-generated/sequences
-        mkdir -p docs-generated/schema
+        mkdir -p docs-generated/docs/sequences
+        mkdir -p docs-generated/docs/schema
 
     - name: Generate MkDocs configuration
       run: |
@@ -89,7 +89,8 @@ jobs:
           - toc:
               permalink: true
 
-        docs_dir: '.'
+        docs_dir: 'docs'
+        site_dir: 'build'
         
         nav:
           - Home: index.md
@@ -103,7 +104,7 @@ jobs:
 
     - name: Create main index page
       run: |
-        cat > docs-generated/index.md << 'EOF'
+        cat > docs-generated/docs/index.md << 'EOF'
         # NMR Pulse Sequence Repository
 
         Welcome to the community-driven repository for Nuclear Magnetic Resonance (NMR) pulse sequences with automated annotation, versioning, and documentation systems.
@@ -136,7 +137,7 @@ jobs:
 
     - name: Create contributing page
       run: |
-        cat > docs-generated/contributing.md << 'EOF'
+        cat > docs-generated/docs/contributing.md << 'EOF'
         # Contributing
 
         We welcome contributions from the entire NMR community! This repository is designed to accommodate contributors with varying levels of technical expertise.
@@ -212,7 +213,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: docs-generated/site
+        path: docs-generated/build
 
   deploy:
     environment:

@@ -106,7 +106,7 @@ class SequenceParser:
 class DocumentationGenerator:
     def __init__(self, sequences: Dict[str, Dict[str, Any]]):
         self.sequences = sequences
-        self.output_dir = Path("docs-generated")
+        self.output_dir = Path("docs-generated/docs")
         
     def generate_sequence_page(self, seq_name: str, metadata: Dict[str, Any]) -> str:
         """Generate markdown page for a single sequence."""
