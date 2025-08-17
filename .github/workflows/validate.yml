@@ -127,8 +127,8 @@ jobs:
         echo "Checking file naming conventions..."
         find sequences -type f ! -name 'README.md' ! -name '.*' | while read file; do
           basename=$(basename "$file")
-          if [[ ! "$basename" =~ ^[a-z0-9_]+$ ]]; then
-            echo "❌ Invalid filename: $file (should be lowercase with underscores)"
+          if [[ ! "$basename" =~ ^[a-zA-Z0-9_.-]+$ ]]; then
+            echo "❌ Invalid filename: $file (should contain only letters, numbers, underscores, dots, and hyphens)"
             exit 1
           else
             echo "✓ $file - Valid filename"
