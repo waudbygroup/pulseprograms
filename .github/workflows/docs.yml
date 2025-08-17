@@ -1,0 +1,224 @@
+name: Documentation Generation
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for Git-based changelogs
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyyaml mkdocs mkdocs-material mkdocs-git-revision-date-localized-plugin
+        pip install mkdocs-search-plugin pygments
+
+    - name: Create directories
+      run: |
+        mkdir -p .github/scripts
+        mkdir -p docs-generated/sequences
+        mkdir -p docs-generated/schema
+
+    - name: Generate MkDocs configuration
+      run: |
+        cat > docs-generated/mkdocs.yml << 'EOF'
+        site_name: NMR Pulse Sequence Repository
+        site_description: Community-driven repository for NMR pulse sequences with automated annotation and documentation
+        site_url: https://waudbygroup.github.io/pulseprograms
+        repo_url: https://github.com/waudbygroup/pulseprograms
+        repo_name: waudbygroup/pulseprograms
+
+        theme:
+          name: material
+          features:
+            - navigation.tabs
+            - navigation.sections
+            - navigation.expand
+            - navigation.top
+            - search.highlight
+            - search.share
+            - content.code.copy
+          palette:
+            - scheme: default
+              primary: blue
+              accent: blue
+              toggle:
+                icon: material/brightness-7
+                name: Switch to dark mode
+            - scheme: slate
+              primary: blue
+              accent: blue
+              toggle:
+                icon: material/brightness-4
+                name: Switch to light mode
+
+        plugins:
+          - search:
+              lang: en
+          - git-revision-date-localized:
+              enable_creation_date: true
+
+        markdown_extensions:
+          - admonition
+          - codehilite
+          - pymdownx.superfences
+          - pymdownx.tabbed
+          - pymdownx.details
+          - tables
+          - toc:
+              permalink: true
+
+        nav:
+          - Home: index.md
+          - Database: database.md
+          - Sequences:
+            - sequences/
+          - Schema:
+            - Current: schema/current.md
+          - Contributing: contributing.md
+        EOF
+
+    - name: Create main index page
+      run: |
+        cat > docs-generated/index.md << 'EOF'
+        # NMR Pulse Sequence Repository
+
+        Welcome to the community-driven repository for Nuclear Magnetic Resonance (NMR) pulse sequences with automated annotation, versioning, and documentation systems.
+
+        ## Quick Start
+
+        - **Browse sequences**: Visit the [Database](database.md) to search and filter sequences
+        - **View individual sequences**: Each sequence has its own page with metadata and changelog
+        - **Download**: Access pulse program files directly from sequence pages
+        - **Contribute**: See our [Contributing Guide](contributing.md) for submission guidelines
+
+        ## Features
+
+        - **TopSpin Compatible**: All sequences work seamlessly in Bruker workflows
+        - **Rich Metadata**: Embedded YAML annotations for enhanced documentation
+        - **Version Control**: Git-based changelog tracking for all sequences
+        - **Community Driven**: Multiple contribution pathways with varying barriers to entry
+        - **Searchable**: Advanced filtering by experiment type, features, and nuclei
+
+        ## Repository Structure
+
+        - **Sequences**: Individual pulse program files with embedded metadata
+        - **Schema**: YAML schema definitions for metadata validation
+        - **Documentation**: Auto-generated pages with searchable database
+
+        ## Latest Updates
+
+        This documentation is automatically generated from the repository content and updated with each commit to the main branch.
+        EOF
+
+    - name: Create contributing page
+      run: |
+        cat > docs-generated/contributing.md << 'EOF'
+        # Contributing
+
+        We welcome contributions from the entire NMR community! This repository is designed to accommodate contributors with varying levels of technical expertise.
+
+        ## Quick Links
+
+        - **GitHub Repository**: [waudbygroup/pulseprograms](https://github.com/waudbygroup/pulseprograms)
+        - **Issues**: [Submit sequences or report problems](https://github.com/waudbygroup/pulseprograms/issues)
+        - **Pull Requests**: [Direct contributions](https://github.com/waudbygroup/pulseprograms/pulls)
+
+        ## Contribution Methods
+
+        ### 🚀 Low Barrier: GitHub Issues
+        - Open a new issue with your pulse sequence
+        - Provide basic information (name, type, author)
+        - Maintainers will add metadata and integrate
+
+        ### 🎯 Medium Barrier: Pull Requests
+        - Fork the repository
+        - Add your sequence with basic metadata
+        - Submit a pull request for review
+
+        ### 🔬 High Barrier: Full Annotation
+        - Complete YAML metadata annotations
+        - Follow schema requirements exactly
+        - Maximum searchability and features
+
+        ## Metadata Requirements
+
+        All sequences must include embedded YAML metadata using `;@` comment prefix:
+
+        ```bruker
+        ;@ schema_version: "0.0.1"
+        ;@ sequence_version: "1.0.0"
+        ;@ title: Your Sequence Name
+        ;@ authors: [Your Name <email@institution.edu>]
+        ;@ created: 2024-01-15
+        ;@ repository: github.com/waudbygroup/pulseprograms
+        ;@ status: experimental
+
+        ; Your pulse program code follows...
+        ```
+
+        ## Quality Standards
+
+        - Sequences must work correctly in TopSpin
+        - Required metadata fields must be included
+        - YAML syntax must be valid
+        - Follow naming conventions (snake_case)
+
+        For complete guidelines, see the [CONTRIBUTING.md](https://github.com/waudbygroup/pulseprograms/blob/main/CONTRIBUTING.md) file in the repository.
+        EOF
+
+    - name: Copy documentation generation scripts
+      run: |
+        cp .github/scripts/generate_docs.py docs-generated/
+        cp .github/scripts/generate_schema_docs.py docs-generated/
+
+    - name: Run documentation generation
+      run: |
+        cd docs-generated
+        python generate_docs.py
+        python generate_schema_docs.py
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+
+    - name: Build with MkDocs
+      run: |
+        cd docs-generated
+        mkdocs build
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: docs-generated/site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2

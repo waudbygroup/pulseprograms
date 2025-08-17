@@ -1,0 +1,94 @@
+# MkDocs configuration for NMR Pulse Sequence Repository
+site_name: NMR Pulse Sequence Repository
+site_description: Community-driven repository for sharing and documenting NMR pulse sequences
+site_url: https://your-org.github.io/pulseprograms/
+repo_url: https://github.com/your-org/pulseprograms
+repo_name: your-org/pulseprograms
+
+theme:
+  name: material
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+    - toc.follow
+    - content.code.copy
+
+plugins:
+  - search
+  - tags
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Quick Start: getting-started/quickstart.md
+    - Installation: getting-started/installation.md
+    - Basic Usage: getting-started/usage.md
+  - Sequence Database:
+    - Browse All: sequences/index.md
+    - By Experiment Type: sequences/by-type.md
+    - By Status: sequences/by-status.md
+  - Contributing:
+    - Overview: contributing/index.md
+    - Low Barrier: contributing/low-barrier.md
+    - Medium Barrier: contributing/medium-barrier.md
+    - High Barrier: contributing/high-barrier.md
+    - Review Process: contributing/review.md
+  - Annotation Schema:
+    - Current Schema: schema/current.md
+    - Field Reference: schema/fields.md
+    - Examples: schema/examples.md
+    - Validation: schema/validation.md
+  - Community:
+    - Guidelines: community/guidelines.md
+    - Recognition: community/recognition.md
+    - Discussions: community/discussions.md
+  - Technical:
+    - GitHub Actions: technical/github-actions.md
+    - API Reference: technical/api.md
+    - Development: technical/development.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/your-org/pulseprograms
+  version:
+    provider: mike
