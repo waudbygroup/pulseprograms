@@ -41,6 +41,12 @@ class SequenceParser:
             if not isinstance(metadata, dict):
                 return None
             
+            # Convert date objects to strings for consistency
+            from datetime import date
+            for key, value in metadata.items():
+                if isinstance(value, date):
+                    metadata[key] = value.isoformat()
+            
             # Add file information
             metadata['_file_path'] = str(file_path)
             metadata['_file_name'] = file_path.name

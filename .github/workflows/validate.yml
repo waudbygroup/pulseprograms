@@ -68,6 +68,7 @@ jobs:
         import re
         
         def extract_yaml_metadata(filepath):
+            from datetime import date
             with open(filepath, 'r') as f:
                 content = f.read()
             
@@ -80,7 +81,15 @@ jobs:
                 return None
                 
             yaml_content = '\n'.join(yaml_lines)
-            return yaml.safe_load(yaml_content)
+            metadata = yaml.safe_load(yaml_content)
+            
+            # Convert date objects to strings for JSON schema validation
+            if metadata:
+                for key, value in metadata.items():
+                    if isinstance(value, date):
+                        metadata[key] = value.isoformat()
+            
+            return metadata
         
         # Load current schema
         with open('schemas/current', 'r') as f:
