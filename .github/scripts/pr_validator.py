@@ -206,33 +206,23 @@ class PRValidator:
                 'example': '"Descriptive Sequence Name"'
             })
         
-        # Optional field recommendations (as examples, not literal suggestions)
-        valuable_optional_fields = {
-            'experiment_type': {
-                'description': 'Array of keywords describing the experiment type',
+        # Only suggest experiment_type and description as key optional fields
+        key_optional_fields = {}
+        
+        if 'experiment_type' not in metadata:
+            key_optional_fields['experiment_type'] = {
+                'description': 'Keywords describing the experiment type',
                 'examples': ['hsqc', '2d', 'cosy', 'tocsy', 'noesy', 'relaxation', '1d', 'cest']
-            },
-            'nuclei_hint': {
-                'description': 'Array of nuclei involved in the experiment', 
-                'examples': ['1H', '13C', '15N', '19F', '31P']
-            },
-            'description': {
-                'description': 'Brief description of what this sequence does and when to use it',
-                'examples': []
-            },
-            'features': {
-                'description': 'Array of technical features used in the sequence',
-                'examples': ['watergate', 'gradient', 'selective', 'sofast', 'trosy']
             }
-        }
         
-        missing_optional = {}
-        for field, info in valuable_optional_fields.items():
-            if field not in metadata:
-                missing_optional[field] = info
+        if 'description' not in metadata:
+            key_optional_fields['description'] = {
+                'description': 'Brief description of what this sequence does',
+                'examples': []
+            }
         
-        if missing_optional:
-            suggestions['optional_recommendations'] = missing_optional
+        if key_optional_fields:
+            suggestions['key_optional_fields'] = key_optional_fields
         
         return suggestions
     
@@ -347,23 +337,36 @@ No sequence files were changed in this PR.
             
             comment += f"### {status_icon} `{file_name}` - {status_text}\n\n"
             
-            # Add errors
+            # Show current metadata first (if any exists)
+            metadata = None
+            if not result['errors'] or 'No YAML metadata found' not in str(result['errors']):
+                # Try to extract metadata to show what's currently there
+                try:
+                    metadata = self.extract_metadata(result['file'])
+                except:
+                    pass
+            
+            if metadata:
+                comment += "**📋 Current Metadata:**\n"
+                for key, value in sorted(metadata.items()):
+                    if not key.startswith('_'):  # Skip internal fields
+                        if isinstance(value, list):
+                            value_str = ', '.join(str(v) for v in value)
+                        else:
+                            value_str = str(value)
+                        comment += f"- `{key}`: {value_str}\n"
+                comment += "\n"
+            
+            # Show errors first (highest priority)
             if result['errors']:
-                comment += "**❌ Errors:**\n"
+                comment += "**❌ Required Actions:**\n"
                 for error in result['errors']:
                     comment += f"- {error}\n"
                 comment += "\n"
             
-            # Add warnings
-            if result['warnings']:
-                comment += "**⚠️ Warnings:**\n"
-                for warning in result['warnings']:
-                    comment += f"- {warning}\n"
-                comment += "\n"
-            
             # Handle complete template for files with no metadata
             if 'complete_template' in suggestions:
-                comment += "**📝 Add Complete Metadata (Copy & Paste Ready):**\n\n"
+                comment += "**📝 Add This Metadata (Copy & Paste):**\n\n"
                 comment += "```yaml\n"
                 for field, value in suggestions['complete_template'].items():
                     comment += f";@ {field}: {value}\n"
@@ -374,36 +377,32 @@ No sequence files were changed in this PR.
                 missing_fields = suggestions['missing_required']
                 suggested_metadata = suggestions.get('suggested_metadata', {})
                 
-                comment += f"**📋 Missing Required Fields ({len(missing_fields)}):**\n"
-                comment += f"Add these to your existing metadata:\n\n"
+                comment += f"**📝 Add Missing Required Fields:**\n\n"
                 comment += "```yaml\n"
                 for field in missing_fields:
                     value = suggested_metadata.get(field, '""')
                     comment += f";@ {field}: {value}\n"
                 comment += "```\n\n"
             
-            # Handle field improvements
-            if suggestions.get('improvements'):
-                comment += "**✨ Suggested Improvements:**\n"
-                for improvement in suggestions['improvements']:
-                    comment += f"- **{improvement['field']}**: {improvement['suggestion']}\n"
-                    comment += f"  ```yaml\n  ;@ {improvement['field']}: {improvement['example']}\n  ```\n"
-                comment += "\n"
-            
-            # Handle optional recommendations
-            if suggestions.get('optional_recommendations'):
-                optional_fields = suggestions['optional_recommendations']
-                comment += f"**💡 Optional Fields for Better Discoverability:**\n"
-                comment += f"Consider adding these fields (choose appropriate values for your sequence):\n\n"
+            # Handle key optional fields (experiment_type and description only)
+            if suggestions.get('key_optional_fields'):
+                optional_fields = suggestions['key_optional_fields']
+                comment += "**💡 Recommended Optional Fields:**\n\n"
                 
                 for field, info in optional_fields.items():
-                    comment += f"**`{field}`**: {info['description']}\n"
-                    if info['examples']:
-                        examples_str = ', '.join(f"`{ex}`" for ex in info['examples'])
-                        comment += f"  - Example values: {examples_str}\n"
-                    else:
-                        comment += f"  - Example: `;@ {field}: \"Your sequence description here\"`\n"
-                    comment += "\n"
+                    if field == 'experiment_type':
+                        examples_str = ', '.join(f"`{ex}`" for ex in info['examples'][:6])  # Limit examples
+                        comment += f"- **`{field}`**: {info['description']} (e.g., {examples_str})\n"
+                    else:  # description
+                        comment += f"- **`{field}`**: {info['description']}\n"
+                comment += "\n"
+            
+            # Add warnings at the end (lowest priority)
+            if result['warnings']:
+                comment += "**⚠️ Suggestions:**\n"
+                for warning in result['warnings']:
+                    comment += f"- {warning}\n"
+                comment += "\n"
             
             comment += "---\n\n"
         
@@ -415,8 +414,8 @@ No sequence files were changed in this PR.
         comment += f"""
 ## 📚 Resources
 
-- **Schema documentation:** See the [current schema](https://github.com/{self.repo_info['name']}/blob/main/schemas/v0.0.1.yaml)
-- **Contributing guide:** Check [CONTRIBUTING.md](https://github.com/{self.repo_info['name']}/blob/main/CONTRIBUTING.md)
+- **All optional fields:** See the [schema documentation](https://github.com/{self.repo_info['name']}/blob/main/schemas/v0.0.1.yaml) for complete field list
+- **Contributing guide:** Check [CONTRIBUTING.md](https://github.com/{self.repo_info['name']}/blob/main/CONTRIBUTING.md) for detailed instructions
 - **Examples:** Browse existing sequences for annotation patterns
 
 💡 **Need help?** Open an issue or check our contributing guidelines for detailed instructions.
