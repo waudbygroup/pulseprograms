@@ -425,6 +425,10 @@ jobs:
                     comment += "---\n\n"
                 
                 # Add footer with helpful information
+                author_display = self.repo_info['author_name']
+                if self.repo_info['author_email'] != 'email@institution.edu':
+                    author_display += f" <{self.repo_info['author_email']}>"
+                
                 comment += f"""
         ## 📚 Resources
         
@@ -437,7 +441,7 @@ jobs:
         ---
         *This validation was performed automatically. The suggestions above are meant to be helpful - not all are required for your PR to be accepted.*
         
-        **Detected contributor:** {self.repo_info['author_name']} <{self.repo_info['author_email']}>
+        **Detected contributor:** {author_display}
         """
                 
                 return comment
