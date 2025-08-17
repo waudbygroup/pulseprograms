@@ -95,8 +95,6 @@ jobs:
         nav:
           - Home: index.md
           - Database: database.md
-          - Sequences:
-            - sequences/
           - Schema:
             - Current: schema/current.md
           - Contributing: contributing.md
