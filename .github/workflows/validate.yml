@@ -11,6 +11,7 @@ on:
     paths:
       - 'sequences/**'
       - 'schemas/**'
+  workflow_dispatch:
 
 jobs:
   validate-sequences:
