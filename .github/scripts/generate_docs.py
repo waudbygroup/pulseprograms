@@ -255,6 +255,13 @@ class DocumentationGenerator:
                 with open(sequence_file_path, 'r', encoding='utf-8') as f:
                     source_content = f.read()
                 md_content.extend(["## Source Code", ""])
+                
+                # Add GitHub link if repository info available
+                if 'repository' in metadata:
+                    repo = metadata['repository']
+                    md_content.append(f"View on GitHub: [{repo}/sequences/{seq_name}](https://{repo}/blob/main/sequences/{seq_name})")
+                    md_content.append("")
+                
                 md_content.extend([
                     "```bruker",
                     source_content.rstrip(),
@@ -270,14 +277,6 @@ class DocumentationGenerator:
             for commit in metadata['_git_history']:
                 md_content.append(f"- **{commit['date']}** ({commit['hash']}): {commit['message']} - {commit['author']}")
         
-        # Repository link
-        if 'repository' in metadata:
-            repo = metadata['repository']
-            file_name = metadata['_file_name']
-            md_content.extend([
-                "", "## Source", "",
-                f"View source: [{repo}/sequences/{file_name}](https://{repo}/blob/main/sequences/{file_name})"
-            ])
         
         return '\n'.join(md_content)
     
