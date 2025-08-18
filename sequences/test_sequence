@@ -10,3 +10,5 @@
 ; This is a minimal sequence for testing PR validation
 "p1=4u"
 "d1=1s"
+
+; with an update to the sequence which should trigger a version bump
