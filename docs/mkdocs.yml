@@ -72,9 +72,10 @@ nav:
   - Home: index.md
   - Getting Started:
     - Quick Start: getting-started/quickstart.md
-    - Installation: getting-started/installation.md
-    - Basic Usage: getting-started/usage.md
-  - Sequence Database: sequences/index.md
+    # - Installation: getting-started/installation.md
+    # - Basic Usage: getting-started/usage.md
+  - Sequences: sequences/index.md
+  - Database: database/
   - Contributing: contributing/index.md
   # - Contributing:
     # - Overview: contributing/index.md
@@ -96,7 +97,7 @@ nav:
 
 extra:
   social:
-    - icon: fontawesome/brands/github
+    - icon: material/github
       link: https://github.com/waudbygroup/pulseprograms
   version:
     provider: mike
