@@ -2,10 +2,10 @@
 ;@ sequence_version: "1.0.0"
 ;@ title: 19F CEST
 ;@ description: |
-;@ 1D 19F CEST measurement
+;@   1D 19F CEST measurement
 ;@
-;@ - Saturation applied for duration d18 during recycle delay
-;@ - Additional relaxation delay of d1 applied without saturation
+;@   - Saturation applied for duration d18 during recycle delay
+;@   - Additional relaxation delay of d1 applied without saturation
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2025-08-01
