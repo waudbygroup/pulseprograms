@@ -42,6 +42,12 @@ jobs:
         cp -r docs/* docs-generated/docs/
         # Copy mkdocs.yml to the parent directory
         cp docs/mkdocs.yml docs-generated/
+        # Set the site_dir to build instead of default 'site'
+        if ! grep -q "site_dir:" docs-generated/mkdocs.yml; then
+          sed -i '/^site_name:/a site_dir: build' docs-generated/mkdocs.yml
+        else
+          sed -i "s|site_dir: .*|site_dir: build|g" docs-generated/mkdocs.yml
+        fi
         # Ensure sequence and schema directories exist for generated content
         mkdir -p docs-generated/docs/sequences
         mkdir -p docs-generated/docs/schema
