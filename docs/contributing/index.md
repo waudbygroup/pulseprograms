@@ -2,28 +2,20 @@
 
 We welcome contributions from the entire NMR community! This repository is designed to accommodate contributors with varying levels of technical expertise.
 
-## Quick Links
-
-- **GitHub Repository**: [waudbygroup/pulseprograms](https://github.com/waudbygroup/pulseprograms)
-- **Issues**: [Submit sequences or report problems](https://github.com/waudbygroup/pulseprograms/issues)
-- **Pull Requests**: [Direct contributions](https://github.com/waudbygroup/pulseprograms/pulls)
-
 ## Contribution Methods
 
-### 🚀 Low Barrier: GitHub Issues
-- Open a new issue with your pulse sequence
+### Easy: Use GitHub Issues
+
+Quick link: [Submit a new sequence or report a problem](https://github.com/waudbygroup/pulseprograms/issues)
+
+- Open a new issue and paste in or attach your pulse sequence
 - Provide basic information (name, type, author)
-- Maintainers will add metadata and integrate
+- Maintainers will add essential metadata and integrate
 
-### 🎯 Medium Barrier: Pull Requests
-- Fork the repository
-- Add your sequence with basic metadata
-- Submit a pull request for review
-
-### 🔬 High Barrier: Full Annotation
-- Complete YAML metadata annotations
-- Follow schema requirements exactly
-- Maximum searchability and features
+### Advanced: Submit a Pull Request
+- Fork the [repository](https://github.com/waudbygroup/pulseprograms)
+- Add your sequence including at least essential metadata
+- Submit a [pull request](https://github.com/waudbygroup/pulseprograms/pulls) for review
 
 ## Metadata Requirements
 
@@ -46,6 +38,5 @@ All sequences must include embedded YAML metadata using `;@` comment prefix:
 - Sequences must work correctly in TopSpin
 - Required metadata fields must be included
 - YAML syntax must be valid
-- Follow naming conventions (snake_case)
 
 For complete guidelines, see the [CONTRIBUTING.md](https://github.com/waudbygroup/pulseprograms/blob/main/CONTRIBUTING.md) file in the repository.

@@ -74,8 +74,8 @@ nav:
     - Quick Start: getting-started/quickstart.md
     # - Installation: getting-started/installation.md
     # - Basic Usage: getting-started/usage.md
-  - Sequences: sequences/index.md
-  - Database: database/
+  # - Sequences: sequences/index.md
+  - Sequence Database: database/
   - Contributing: contributing/index.md
   # - Contributing:
     # - Overview: contributing/index.md
