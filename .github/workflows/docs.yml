@@ -54,10 +54,22 @@ jobs:
 
     - name: Generate dynamic content
       run: |
+        # Debug: Check what we have
+        echo "Sequences directory contents:"
+        ls -la sequences/ || echo "sequences/ directory not found"
+        echo "Generated docs directory:"
+        ls -la docs-generated/docs/ || echo "docs-generated/docs/ not found"
+        
         # Generate sequence database and individual sequence pages
         python .github/scripts/generate_docs.py
         # Generate schema documentation
         python .github/scripts/generate_schema_docs.py
+        
+        # Debug: Check what was generated
+        echo "After generation:"
+        ls -la docs-generated/docs/ || echo "docs-generated/docs/ not found"
+        echo "Database file:"
+        ls -la docs-generated/docs/database.md || echo "database.md not found"
 
     - name: Setup Pages
       uses: actions/configure-pages@v3
