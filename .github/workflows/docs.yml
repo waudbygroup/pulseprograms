@@ -36,19 +36,15 @@ jobs:
 
     - name: Prepare documentation build
       run: |
-        # Copy existing docs structure to build location
-        cp -r docs/ docs-generated/
+        # Create proper directory structure
+        mkdir -p docs-generated/docs
+        # Copy existing docs content to docs subdirectory
+        cp -r docs/* docs-generated/docs/
+        # Copy mkdocs.yml to the parent directory
+        cp docs/mkdocs.yml docs-generated/
         # Ensure sequence and schema directories exist for generated content
-        mkdir -p docs-generated/sequences
-        mkdir -p docs-generated/schema
-        # Add docs_dir setting at the top level of mkdocs.yml
-        if ! grep -q "docs_dir:" docs-generated/mkdocs.yml; then
-          # Insert docs_dir after site_name
-          sed -i '/^site_name:/a docs_dir: .' docs-generated/mkdocs.yml
-        else
-          # Replace existing docs_dir
-          sed -i "s|docs_dir: .*|docs_dir: .|g" docs-generated/mkdocs.yml
-        fi
+        mkdir -p docs-generated/docs/sequences
+        mkdir -p docs-generated/docs/schema
 
     - name: Generate dynamic content
       run: |
