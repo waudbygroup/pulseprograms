@@ -95,6 +95,10 @@ nav:
   #   - API Reference: technical/api.md
   #   - Development: technical/development.md
 
+extra_javascript:
+  - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
+  - javascripts/tablesort.js
+
 extra:
   social:
     - icon: material/github
