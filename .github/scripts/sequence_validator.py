@@ -16,15 +16,18 @@ def extract_yaml_metadata(filepath):
         with open(filepath, 'r') as f:
             content = f.read()
         
-        # Extract lines starting with ';@'
+        # Extract all lines starting with ';@' and strip the prefix
         yaml_lines = []
         for line in content.split('\n'):
             if line.strip().startswith(';@'):
-                yaml_lines.append(line.strip()[2:].strip())
+                # Remove ';@' prefix and any leading whitespace after it
+                yaml_line = line.strip()[2:].lstrip()
+                yaml_lines.append(yaml_line)
         
         if not yaml_lines:
             return None
             
+        # Join all YAML lines and parse as a single block
         yaml_content = '\n'.join(yaml_lines)
         metadata = yaml.safe_load(yaml_content)
         

@@ -120,18 +120,18 @@ class PRValidator:
             with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
             
-            # Extract YAML metadata
-            yaml_pattern = r'^;@\s*(.+)$'
+            # Extract all lines starting with ';@' and strip the prefix
             yaml_lines = []
-            
             for line in content.split('\n'):
-                match = re.match(yaml_pattern, line)
-                if match:
-                    yaml_lines.append(match.group(1))
+                if line.strip().startswith(';@'):
+                    # Remove ';@' prefix and any leading whitespace after it
+                    yaml_line = line.strip()[2:].lstrip()
+                    yaml_lines.append(yaml_line)
             
             if not yaml_lines:
                 return None
             
+            # Join all YAML lines and parse as a single block
             yaml_content = '\n'.join(yaml_lines)
             metadata = yaml.safe_load(yaml_content)
             
@@ -339,17 +339,18 @@ class PRValidator:
             
             # Extract metadata from previous version
             content = result.stdout
-            yaml_pattern = r'^;@\s*(.+)$'
             yaml_lines = []
             
             for line in content.split('\n'):
-                match = re.match(yaml_pattern, line)
-                if match:
-                    yaml_lines.append(match.group(1))
+                if line.strip().startswith(';@'):
+                    # Remove ';@' prefix and any leading whitespace after it
+                    yaml_line = line.strip()[2:].lstrip()
+                    yaml_lines.append(yaml_line)
             
             if not yaml_lines:
                 return None
             
+            # Join all YAML lines and parse as a single block
             yaml_content = '\n'.join(yaml_lines)
             metadata = yaml.safe_load(yaml_content)
             
