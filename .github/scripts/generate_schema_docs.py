@@ -8,7 +8,7 @@ from pathlib import Path
 def generate_schema_docs():
     """Generate documentation for the current schema."""
     schema_dir = Path("schemas")
-    output_dir = Path("docs-generated/docs/schema")
+    output_dir = Path("docs-generated/schema")
     output_dir.mkdir(parents=True, exist_ok=True)
     
     # Read current schema

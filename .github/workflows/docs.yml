@@ -34,178 +34,20 @@ jobs:
         pip install pyyaml mkdocs mkdocs-material mkdocs-git-revision-date-localized-plugin
         pip install pygments
 
-    - name: Create directories
+    - name: Prepare documentation build
       run: |
-        mkdir -p .github/scripts
-        mkdir -p docs-generated/docs/sequences
-        mkdir -p docs-generated/docs/schema
+        # Copy existing docs structure to build location
+        cp -r docs/ docs-generated/
+        # Ensure sequence and schema directories exist for generated content
+        mkdir -p docs-generated/sequences
+        mkdir -p docs-generated/schema
 
-    - name: Generate MkDocs configuration
+    - name: Generate dynamic content
       run: |
-        cat > docs-generated/mkdocs.yml << 'EOF'
-        site_name: NMR Pulse Sequence Repository
-        site_description: Community-driven repository for NMR pulse sequences with automated annotation and documentation
-        site_url: https://waudbygroup.github.io/pulseprograms
-        repo_url: https://github.com/waudbygroup/pulseprograms
-        repo_name: waudbygroup/pulseprograms
-
-        theme:
-          name: material
-          features:
-            - navigation.tabs
-            - navigation.sections
-            - navigation.expand
-            - navigation.top
-            - search.highlight
-            - search.share
-            - content.code.copy
-          palette:
-            - scheme: default
-              primary: blue
-              accent: blue
-              toggle:
-                icon: material/brightness-7
-                name: Switch to dark mode
-            - scheme: slate
-              primary: blue
-              accent: blue
-              toggle:
-                icon: material/brightness-4
-                name: Switch to light mode
-
-        plugins:
-          - search:
-              lang: en
-          - git-revision-date-localized:
-              enable_creation_date: true
-
-        markdown_extensions:
-          - admonition
-          - codehilite
-          - pymdownx.superfences
-          - pymdownx.tabbed
-          - pymdownx.details
-          - tables
-          - toc:
-              permalink: true
-
-        docs_dir: 'docs'
-        site_dir: 'build'
-        
-        nav:
-          - Home: index.md
-          - Database: database.md
-          - Schema:
-            - Current: schema/current.md
-          - Contributing: contributing.md
-        EOF
-
-    - name: Create main index page
-      run: |
-        cat > docs-generated/docs/index.md << 'EOF'
-        # NMR Pulse Sequence Repository
-
-        Welcome to the community-driven repository for Nuclear Magnetic Resonance (NMR) pulse sequences with automated annotation, versioning, and documentation systems.
-
-        ## Quick Start
-
-        - **Browse sequences**: Visit the [Database](database.md) to search and filter sequences
-        - **View individual sequences**: Each sequence has its own page with metadata and changelog
-        - **Download**: Access pulse program files directly from sequence pages
-        - **Contribute**: See our [Contributing Guide](contributing.md) for submission guidelines
-
-        ## Features
-
-        - **TopSpin Compatible**: All sequences work seamlessly in Bruker workflows
-        - **Rich Metadata**: Embedded YAML annotations for enhanced documentation
-        - **Version Control**: Git-based changelog tracking for all sequences
-        - **Community Driven**: Multiple contribution pathways with varying barriers to entry
-        - **Searchable**: Advanced filtering by experiment type, features, and nuclei
-
-        ## Repository Structure
-
-        - **Sequences**: Individual pulse program files with embedded metadata
-        - **Schema**: YAML schema definitions for metadata validation
-        - **Documentation**: Auto-generated pages with searchable database
-
-        ## Latest Updates
-
-        This documentation is automatically generated from the repository content and updated with each commit to the main branch.
-        EOF
-
-    - name: Create contributing page
-      run: |
-        cat > docs-generated/docs/contributing.md << 'EOF'
-        # Contributing
-
-        We welcome contributions from the entire NMR community! This repository is designed to accommodate contributors with varying levels of technical expertise.
-
-        ## Quick Links
-
-        - **GitHub Repository**: [waudbygroup/pulseprograms](https://github.com/waudbygroup/pulseprograms)
-        - **Issues**: [Submit sequences or report problems](https://github.com/waudbygroup/pulseprograms/issues)
-        - **Pull Requests**: [Direct contributions](https://github.com/waudbygroup/pulseprograms/pulls)
-
-        ## Contribution Methods
-
-        ### 🚀 Low Barrier: GitHub Issues
-        - Open a new issue with your pulse sequence
-        - Provide basic information (name, type, author)
-        - Maintainers will add metadata and integrate
-
-        ### 🎯 Medium Barrier: Pull Requests
-        - Fork the repository
-        - Add your sequence with basic metadata
-        - Submit a pull request for review
-
-        ### 🔬 High Barrier: Full Annotation
-        - Complete YAML metadata annotations
-        - Follow schema requirements exactly
-        - Maximum searchability and features
-
-        ## Metadata Requirements
-
-        All sequences must include embedded YAML metadata using `;@` comment prefix:
-
-        ```bruker
-        ;@ schema_version: "0.0.1"
-        ;@ sequence_version: "1.0.0"
-        ;@ title: Your Sequence Name
-        ;@ authors: [Your Name <email@institution.edu>]
-        ;@ created: 2024-01-15
-        ;@ repository: github.com/waudbygroup/pulseprograms
-        ;@ status: experimental
-
-        ; Your pulse program code follows...
-        ```
-
-        ## Quality Standards
-
-        - Sequences must work correctly in TopSpin
-        - Required metadata fields must be included
-        - YAML syntax must be valid
-        - Follow naming conventions (snake_case)
-
-        For complete guidelines, see the [CONTRIBUTING.md](https://github.com/waudbygroup/pulseprograms/blob/main/CONTRIBUTING.md) file in the repository.
-        EOF
-
-    - name: Run documentation generation
-      run: |
-        # Debug: show current directory and contents
-        echo "Current directory: $(pwd)"
-        echo "Directory contents:"
-        ls -la
-        echo "Sequences directory:"
-        ls -la sequences/ || echo "sequences/ directory not found"
-        
-        # Run from repository root so scripts can find the sequences/ directory
-        echo "Running documentation generation scripts..."
+        # Generate sequence database and individual sequence pages
         python .github/scripts/generate_docs.py
+        # Generate schema documentation
         python .github/scripts/generate_schema_docs.py
-        
-        # Show what was generated
-        echo "Generated documentation files:"
-        find docs-generated/docs -name "*.md" -type f || echo "No markdown files found"
 
     - name: Setup Pages
       uses: actions/configure-pages@v3
@@ -213,7 +55,7 @@ jobs:
     - name: Build with MkDocs
       run: |
         cd docs-generated
-        mkdocs build
+        mkdocs build --clean
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
