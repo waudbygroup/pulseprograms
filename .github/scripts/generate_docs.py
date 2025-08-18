@@ -248,9 +248,25 @@ class DocumentationGenerator:
         if 'schema_version' in metadata:
             md_content.append(f"*Schema version: {metadata['schema_version']}*")
         
+        # Source code
+        sequence_file_path = Path("sequences") / seq_name
+        if sequence_file_path.exists():
+            try:
+                with open(sequence_file_path, 'r', encoding='utf-8') as f:
+                    source_content = f.read()
+                md_content.extend(["## Source Code", ""])
+                md_content.extend([
+                    "```bruker",
+                    source_content.rstrip(),
+                    "```",
+                    ""
+                ])
+            except Exception as e:
+                print(f"Warning: Could not read source file {sequence_file_path}: {e}")
+        
         # Git history / changelog
         if '_git_history' in metadata and metadata['_git_history']:
-            md_content.extend(["", "## Changelog", ""])
+            md_content.extend(["## Changelog", ""])
             for commit in metadata['_git_history']:
                 md_content.append(f"- **{commit['date']}** ({commit['hash']}): {commit['message']} - {commit['author']}")
         
