@@ -41,11 +41,13 @@ jobs:
         # Ensure sequence and schema directories exist for generated content
         mkdir -p docs-generated/sequences
         mkdir -p docs-generated/schema
-        # Fix docs_dir path for the copied structure
-        sed -i "s|docs_dir: 'docs'|docs_dir: '.'|g" docs-generated/mkdocs.yml || echo "docs_dir not found, adding it"
-        # Add docs_dir setting if it doesn't exist
+        # Add docs_dir setting at the top level of mkdocs.yml
         if ! grep -q "docs_dir:" docs-generated/mkdocs.yml; then
-          echo "docs_dir: '.'" >> docs-generated/mkdocs.yml
+          # Insert docs_dir after site_name
+          sed -i '/^site_name:/a docs_dir: .' docs-generated/mkdocs.yml
+        else
+          # Replace existing docs_dir
+          sed -i "s|docs_dir: .*|docs_dir: .|g" docs-generated/mkdocs.yml
         fi
 
     - name: Generate dynamic content
