@@ -1,5 +1,5 @@
 ;@ schema_version: "0.0.1"
-;@ sequence_version: "1.0.0"
+;@ sequence_version: "0.1.0"
 ;@ title: 19F on-resonance R1rho relaxation dispersion
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
@@ -13,19 +13,15 @@
 ;@ nuclei_hint: [19F, 1H]
 ;@ citation:
 ;@   - Overbeck (2020)
-;@ dimensions: [spinlock_time, spinlock_power, 19F]
+;@ dimensions: [spinlock_duration, spinlock_power, f1]
 ;@ acquisition_order: [3, 1, 2]
-;@ decoupling: [nothing, nothing, 1H]
+;@ decoupling: [nothing, nothing, f2]
 ;@ hard_pulse:
-;@ - [19F, p1, pl1]
-;@ - [1H, p3, pl2]
+;@ - {channel: f1, length: p1, power: pl1}
+;@ - {channel: f2, length: p3, power: pl2}
 ;@ decoupling_pulse:
-;@ - [1H, p4, pl12, cpdprg2]
-;@ spinlock_nucleus: 19F
-;@ spinlock_power: VALIST
-;@ spinlock_time: VPLIST
-;@ spinlock_offset: 0
-;@ spinlock_alignment: hard_pulse
+;@ - {channel: f2, length: p4, power: pl12, program: cpdprg2}
+;@ spinlock: {channel: f1, power: <VALIST>, duration: <VPLIST>, offset: 0, alignment: hard_pulse}
 
 
 /*--------------------------------

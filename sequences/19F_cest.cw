@@ -14,15 +14,12 @@
 ;@ status: beta
 ;@ experiment_type: [cest, 1d]
 ;@ nuclei_hint: [19F]
-;@ dimensions: [spinlock_frequency, 19F]
+;@ dimensions: [spinlock_frequency, f1]
 ;@ acquisition_order: [2, 1]
 ;@ decoupling: [nothing, nothing]
 ;@ hard_pulse:
-;@ - [19F, p1, pl1]
-;@ spinlock_nucleus: 19F
-;@ spinlock_power: pl8
-;@ spinlock_time: d18
-;@ spinlock_offset: FQ1LIST
+;@ - {channel: f1, length: p1, power: pl1}
+;@ spinlock: {channel: f1, power: pl8, duration: d18, offset: <FQ1LIST>}
 
 #include <Avance.incl>
 #include <Grad.incl>
