@@ -116,72 +116,124 @@ class DocumentationGenerator:
         """Generate markdown page for a single sequence."""
         title = metadata.get('title', seq_name)
         
-        md_content = [
-            f"# {title}",
-            "",
-            "## Metadata",
-            ""
-        ]
+        md_content = [f"# {title}", ""]
         
-        # Basic information table
-        basic_fields = ['schema_version', 'sequence_version', 'status', 'created', 'last_modified']
-        md_content.extend([
-            "| Field | Value |",
-            "|-------|-------|"
-        ])
+        # 1.5. Version, status, last modified (compact info box)
+        info_items = []
+        if 'sequence_version' in metadata:
+            info_items.append(f"**Version:** {metadata['sequence_version']}")
+        if 'status' in metadata:
+            status_emoji = {"experimental": "🧪", "beta": "🔬", "stable": "✅", "deprecated": "⚠️"}
+            emoji = status_emoji.get(metadata['status'], "")
+            info_items.append(f"**Status:** {emoji} {metadata['status']}")
+        if 'last_modified' in metadata:
+            info_items.append(f"**Last Modified:** {metadata['last_modified']}")
         
-        for field in basic_fields:
-            if field in metadata:
-                value = metadata[field]
-                if isinstance(value, list):
-                    value = ', '.join(str(v) for v in value)
-                md_content.append(f"| {field.replace('_', ' ').title()} | {value} |")
+        if info_items:
+            md_content.extend(["> " + " • ".join(info_items), ""])
         
-        # Authors
+        # 2. Description
+        if 'description' in metadata:
+            md_content.extend(["## Description", "", metadata['description'], ""])
+        
+        # 3. Experiment Type
+        if 'experiment_type' in metadata:
+            md_content.extend(["## Experiment Type", ""])
+            exp_types = metadata['experiment_type']
+            if isinstance(exp_types, list):
+                type_badges = " ".join([f"`{t}`" for t in exp_types])
+                md_content.extend([type_badges, ""])
+            else:
+                md_content.extend([f"`{exp_types}`", ""])
+        
+        # 4. Features
+        if 'features' in metadata:
+            md_content.extend(["## Features", ""])
+            features = metadata['features']
+            if isinstance(features, list):
+                for feature in features:
+                    md_content.append(f"- {feature}")
+            else:
+                md_content.append(f"- {features}")
+            md_content.append("")
+        
+        # 5. Nuclei Hint
+        if 'nuclei_hint' in metadata:
+            md_content.extend(["## Nuclei", ""])
+            nuclei = metadata['nuclei_hint']
+            if isinstance(nuclei, list):
+                nuclei_badges = " ".join([f"`{n}`" for n in nuclei])
+                md_content.extend([nuclei_badges, ""])
+            else:
+                md_content.extend([f"`{nuclei}`", ""])
+        
+        # 6. Authors
         if 'authors' in metadata:
-            md_content.extend(["", "## Authors", ""])
+            md_content.extend(["## Authors", ""])
             authors = metadata['authors']
             if isinstance(authors, list):
                 for author in authors:
                     md_content.append(f"- {author}")
             else:
                 md_content.append(f"- {authors}")
+            md_content.append("")
         
-        # Experiment details
-        exp_fields = ['experiment_type', 'features', 'nuclei_hint']
-        for field in exp_fields:
-            if field in metadata:
-                md_content.extend([f"", f"## {field.replace('_', ' ').title()}", ""])
-                value = metadata[field]
-                if isinstance(value, list):
-                    for item in value:
-                        md_content.append(f"- {item}")
-                else:
-                    md_content.append(f"{value}")
-        
-        # Description
-        if 'description' in metadata:
-            md_content.extend(["", "## Description", "", metadata['description']])
-        
-        # Citations
+        # 7. Citation
         if 'citation' in metadata:
-            md_content.extend(["", "## Citations", ""])
+            md_content.extend(["## Citations", ""])
             citations = metadata['citation']
             if isinstance(citations, list):
                 for citation in citations:
                     md_content.append(f"- {citation}")
             else:
                 md_content.append(f"- {citations}")
+            md_content.append("")
         
-        # DOIs
+        # 8. DOI
         if 'doi' in metadata:
-            md_content.extend(["", "## DOIs", ""])
+            md_content.extend(["## DOI Links", ""])
             dois = metadata['doi']
             if isinstance(dois, list):
                 for doi in dois:
                     md_content.append(f"- [{doi}](https://doi.org/{doi})")
             else:
                 md_content.append(f"- [{dois}](https://doi.org/{dois})")
+            md_content.append("")
+        
+        # 9. Other fields (any field not in the ordered list above)
+        displayed_fields = {
+            'title', 'sequence_version', 'status', 'last_modified', 'description', 
+            'experiment_type', 'features', 'nuclei_hint', 'authors', 'citation', 
+            'doi', 'schema_version', 'created', 'repository'
+        }
+        
+        other_fields = {k: v for k, v in metadata.items() if k not in displayed_fields}
+        if other_fields:
+            md_content.extend(["## Additional Fields", ""])
+            for field, value in sorted(other_fields.items()):
+                if isinstance(value, list):
+                    md_content.append(f"**{field.replace('_', ' ').title()}:**")
+                    for item in value:
+                        if isinstance(item, dict):
+                            # Handle complex objects like hard_pulse entries
+                            formatted_item = ", ".join([f"{k}: {v}" for k, v in item.items()])
+                            md_content.append(f"- {formatted_item}")
+                        else:
+                            md_content.append(f"- {item}")
+                elif isinstance(value, dict):
+                    md_content.append(f"**{field.replace('_', ' ').title()}:** {', '.join([f'{k}: {v}' for k, v in value.items()])}")
+                else:
+                    md_content.append(f"**{field.replace('_', ' ').title()}:** {value}")
+            md_content.append("")
+        
+        # 10. Schema version and metadata info (at the end)
+        md_content.extend(["---", ""])
+        if 'created' in metadata:
+            md_content.append(f"*Created: {metadata['created']}*")
+        if 'repository' in metadata:
+            md_content.append(f"*Repository: {metadata['repository']}*")
+        if 'schema_version' in metadata:
+            md_content.append(f"*Schema version: {metadata['schema_version']}*")
         
         # Git history / changelog
         if '_git_history' in metadata and metadata['_git_history']:
