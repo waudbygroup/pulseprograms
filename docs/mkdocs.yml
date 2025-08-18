@@ -7,18 +7,30 @@ repo_name: waudbygroup/pulseprograms
 
 theme:
   name: material
+  icon:
+    logo: material/magnet-on
   palette:
     # Palette toggle for light mode
-    - scheme: default
-      primary: indigo
-      accent: blue
+    - media: "(prefers-color-scheme)"
+      primary: orange
+      accent: orange
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: orange
+      accent: orange
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     # Palette toggle for dark mode
-    - scheme: slate
-      primary: indigo
-      accent: blue
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: orange
+      accent: orange
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
@@ -62,29 +74,25 @@ nav:
     - Quick Start: getting-started/quickstart.md
     - Installation: getting-started/installation.md
     - Basic Usage: getting-started/usage.md
-  - Sequence Database:
-    - Browse All: sequences/index.md
-    - By Experiment Type: sequences/by-type.md
-    - By Status: sequences/by-status.md
-  - Contributing:
-    - Overview: contributing/index.md
-    - Low Barrier: contributing/low-barrier.md
-    - Medium Barrier: contributing/medium-barrier.md
-    - High Barrier: contributing/high-barrier.md
-    - Review Process: contributing/review.md
+  - Sequence Database: sequences/index.md
+  - Contributing: contributing/index.md
+  # - Contributing:
+    # - Overview: contributing/index.md
+    # - Low Barrier: contributing/low-barrier.md
+    # - Medium Barrier: contributing/medium-barrier.md
+    # - High Barrier: contributing/high-barrier.md
+    # - Review Process: contributing/review.md
   - Annotation Schema:
     - Current Schema: schema/current.md
     - Field Reference: schema/fields.md
-    - Examples: schema/examples.md
-    - Validation: schema/validation.md
-  - Community:
-    - Guidelines: community/guidelines.md
-    - Recognition: community/recognition.md
-    - Discussions: community/discussions.md
-  - Technical:
-    - GitHub Actions: technical/github-actions.md
-    - API Reference: technical/api.md
-    - Development: technical/development.md
+  # - Community:
+  #   - Guidelines: community/guidelines.md
+  #   - Recognition: community/recognition.md
+  #   - Discussions: community/discussions.md
+  # - Technical:
+  #   - GitHub Actions: technical/github-actions.md
+  #   - API Reference: technical/api.md
+  #   - Development: technical/development.md
 
 extra:
   social:
