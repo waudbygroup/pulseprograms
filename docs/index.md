@@ -1,6 +1,6 @@
 # NMR Pulse Sequence Repository
 
-Welcome to the community-driven repository for Nuclear Magnetic Resonance (NMR) pulse sequences!
+Welcome to the Waudby group repository for Nuclear Magnetic Resonance (NMR) pulse sequences!
 
 ## What is this repository?
 
@@ -8,12 +8,10 @@ This repository provides a platform for the NMR community to share pulse sequenc
 
 ## Key Features
 
-- **🔍 Searchable database** of NMR pulse sequences
-- **📝 Rich metadata** embedded directly in sequence files
-- **🔄 Version control** with Git-based changelog generation
-- **🤝 Community-driven** with multiple contribution pathways
-- **⚡ TopSpin compatible** - works seamlessly in existing workflows
-- **📚 Automatic documentation** generation with individual sequence pages
+- **Searchable database** of NMR pulse sequences
+- **Rich metadata** embedded directly in sequence files
+- **Version control** with Git-based changelog generation
+- **Automatic documentation** generation with individual sequence pages
 
 ## Quick Start
 
@@ -26,19 +24,11 @@ This repository provides a platform for the NMR community to share pulse sequenc
 
 *This section will be automatically populated with recently added sequences*
 
-## Popular Sequences
-
-*This section will show most downloaded/cited sequences*
-
-## Community Stats
-
-*This section will display repository statistics and activity*
-
 ## Getting Help
 
 - 📖 Read the [Getting Started guide](getting-started/quickstart.md)
-- 💬 Join [GitHub Discussions](https://github.com/your-org/pulseprograms/discussions)
-- 🐛 Report issues on [GitHub](https://github.com/your-org/pulseprograms/issues)
+- 💬 Join [GitHub Discussions](https://github.com/waudbygroup/pulseprograms/discussions)
+- 🐛 Report issues on [GitHub](https://github.com/waudbygroup/pulseprograms/issues)
 - 📧 Contact maintainers directly
 
 ## Contributing

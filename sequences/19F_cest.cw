@@ -1,7 +1,11 @@
 ;@ schema_version: "0.0.1"
 ;@ sequence_version: "1.0.0"
 ;@ title: 19F CEST
-;@ description: direct measurement by scanning pre-saturation frequencies
+;@ description: |
+;@ 1D 19F CEST measurement
+;@
+;@ - Saturation applied for duration d18 during recycle delay
+;@ - Additional relaxation delay of d1 applied without saturation
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2025-08-01

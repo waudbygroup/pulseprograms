@@ -33,7 +33,7 @@ All sequence files must include embedded YAML metadata using the `;@` comment pr
 ;@ authors: [Your Name <email@institution.edu>]
 ;@ created: 2024-01-15
 ;@ last_modified: 2024-01-15
-;@ repository: github.com/your-org/pulseprograms
+;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: experimental
 
 ; Optional fields:
@@ -54,6 +54,6 @@ All sequences are validated through the PR review process. The PR Validation Act
 
 ## Browse Sequences
 
-- **Web interface**: Visit the [documentation site](https://your-org.github.io/pulseprograms/sequences/)
+- **Web interface**: Visit the [documentation site](https://waudbygroup.github.io/pulseprograms/sequences/)
 - **Command line**: Use `ls sequences/` to list all sequences
 - **Metadata search**: Use `grep -r "experiment_type.*hsqc" sequences/` to find specific types

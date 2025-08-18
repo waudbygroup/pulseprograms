@@ -1,9 +1,9 @@
 # MkDocs configuration for NMR Pulse Sequence Repository
 site_name: NMR Pulse Sequence Repository
 site_description: Community-driven repository for sharing and documenting NMR pulse sequences
-site_url: https://your-org.github.io/pulseprograms/
-repo_url: https://github.com/your-org/pulseprograms
-repo_name: your-org/pulseprograms
+site_url: https://waudbygroup.github.io/pulseprograms/
+repo_url: https://github.com/waudbygroup/pulseprograms
+repo_name: waudbygroup/pulseprograms
 
 theme:
   name: material
@@ -89,6 +89,6 @@ nav:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/your-org/pulseprograms
+      link: https://github.com/waudbygroup/pulseprograms
   version:
     provider: mike
