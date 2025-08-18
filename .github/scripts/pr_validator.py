@@ -124,9 +124,14 @@ class PRValidator:
             yaml_lines = []
             for line in content.split('\n'):
                 if line.strip().startswith(';@'):
-                    # Remove ';@' prefix and any leading whitespace after it
-                    yaml_line = line.strip()[2:].lstrip()
-                    yaml_lines.append(yaml_line)
+                    # Remove ';@' prefix but preserve indentation after it
+                    if len(line.strip()) == 2:  # Just ';@' with no content
+                        yaml_lines.append('')  # Empty line
+                    else:
+                        yaml_line = line.strip()[2:]  # Remove ';@'
+                        if yaml_line.startswith(' '):
+                            yaml_line = yaml_line[1:]  # Remove one space after ';@'
+                        yaml_lines.append(yaml_line)
             
             if not yaml_lines:
                 return None
@@ -343,9 +348,14 @@ class PRValidator:
             
             for line in content.split('\n'):
                 if line.strip().startswith(';@'):
-                    # Remove ';@' prefix and any leading whitespace after it
-                    yaml_line = line.strip()[2:].lstrip()
-                    yaml_lines.append(yaml_line)
+                    # Remove ';@' prefix but preserve indentation after it
+                    if len(line.strip()) == 2:  # Just ';@' with no content
+                        yaml_lines.append('')  # Empty line
+                    else:
+                        yaml_line = line.strip()[2:]  # Remove ';@'
+                        if yaml_line.startswith(' '):
+                            yaml_line = yaml_line[1:]  # Remove one space after ';@'
+                        yaml_lines.append(yaml_line)
             
             if not yaml_lines:
                 return None
