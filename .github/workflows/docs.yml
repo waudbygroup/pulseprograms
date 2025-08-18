@@ -48,6 +48,11 @@ jobs:
         else
           sed -i "s|site_dir: .*|site_dir: build|g" docs-generated/mkdocs.yml
         fi
+        # Update nav to include the generated database.md  
+        sed -i 's|Browse All: sequences/index.md|Browse All: sequences/index.md|g' docs-generated/mkdocs.yml
+        # Fix deprecated emoji configuration
+        sed -i 's|materialx.emoji.twemoji|material.extensions.emoji.twemoji|g' docs-generated/mkdocs.yml
+        sed -i 's|materialx.emoji.to_svg|material.extensions.emoji.to_svg|g' docs-generated/mkdocs.yml
         # Ensure sequence and schema directories exist for generated content
         mkdir -p docs-generated/docs/sequences
         mkdir -p docs-generated/docs/schema
