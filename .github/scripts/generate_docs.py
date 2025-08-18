@@ -210,20 +210,33 @@ class DocumentationGenerator:
         other_fields = {k: v for k, v in metadata.items() if k not in displayed_fields}
         if other_fields:
             md_content.extend(["## Additional Fields", ""])
+            md_content.extend([
+                "| Field | Value |",
+                "|-------|-------|"
+            ])
+            
             for field, value in sorted(other_fields.items()):
+                field_name = field.replace('_', ' ').title()
+                
                 if isinstance(value, list):
-                    md_content.append(f"**{field.replace('_', ' ').title()}:**")
-                    for item in value:
-                        if isinstance(item, dict):
-                            # Handle complex objects like hard_pulse entries
-                            formatted_item = ", ".join([f"{k}: {v}" for k, v in item.items()])
-                            md_content.append(f"- {formatted_item}")
-                        else:
-                            md_content.append(f"- {item}")
-                elif isinstance(value, dict):
-                    md_content.append(f"**{field.replace('_', ' ').title()}:** {', '.join([f'{k}: {v}' for k, v in value.items()])}")
-                else:
-                    md_content.append(f"**{field.replace('_', ' ').title()}:** {value}")
+                    if not value:  # Empty list
+                        formatted_value = "*empty*"
+                    elif isinstance(value[0], dict):  # List of objects
+                        formatted_items = []
+                        for item in value:
+                            item_parts = [f"{k}: {v}" for k, v in item.items()]
+                            formatted_items.append("{" + ", ".join(item_parts) + "}")
+                        formatted_value = "<br>".join(formatted_items)
+                    else:  # Simple list
+                        formatted_value = "<br>".join([str(item) for item in value])
+                elif isinstance(value, dict):  # Single object
+                    item_parts = [f"{k}: {v}" for k, v in value.items()]
+                    formatted_value = "{" + ", ".join(item_parts) + "}"
+                else:  # Simple value
+                    formatted_value = str(value)
+                
+                md_content.append(f"| {field_name} | {formatted_value} |")
+            
             md_content.append("")
         
         # 10. Schema version and metadata info (at the end)
@@ -231,7 +244,7 @@ class DocumentationGenerator:
         if 'created' in metadata:
             md_content.append(f"*Created: {metadata['created']}*")
         if 'repository' in metadata:
-            md_content.append(f"*Repository: {metadata['repository']}*")
+            md_content.append(f"*Repository: {metadata['repository']}*") 
         if 'schema_version' in metadata:
             md_content.append(f"*Schema version: {metadata['schema_version']}*")
         
