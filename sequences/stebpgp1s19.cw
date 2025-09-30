@@ -1,5 +1,5 @@
 ;@ schema_version: "0.0.1"
-;@ sequence_version: "1.0.0"
+;@ sequence_version: "2.0.0"
 ;@ title: 1H STE diffusion
 ;@ description: |
 ;@   1H STE diffusion measurement
@@ -14,7 +14,7 @@
 ;@ created: 2020-09-04
 ;@ last_modified: 2025-09-30
 ;@ repository: github.com/waudbygroup/pulseprograms
-;@ status: stable
+;@ status: experimental
 ;@ experiment_type: [diffusion, 1d]
 ;@ features: [ste, watergate]
 ;@ nuclei_hint: [1H]
@@ -28,8 +28,9 @@
 ;@ - coherence: [f1, 1]
 ;@ - big-delta: d20
 ;@ - little-delta: p31
+;@ - tau: d17
 ;@ - Gmax: gpz6
-;@ - g: <Difframp>
+;@ - g: [linear, cnst1, cnst2]
 ;@ - shape: gpnam6
 
 
@@ -60,6 +61,7 @@ define list<gradient> diff=<Difframp>
 
 "p2=p1*2"
 "p31=p30*2"
+"d17=d16+p2"
 
 
 "DELTA1=d20-p1*2-p2-p30*2-d16*3-p19"
@@ -69,24 +71,33 @@ define list<gradient> diff=<Difframp>
 "acqt0=0"
 
 
+"l1=0"
+"l2=td1-1"
+"cnst1=0.05"
+"cnst2=0.95"
+
+
 1 ze
 2 d1
 3 50u pl1:f1 UNBLKGRAD
+  "cnst0=cnst1 + l1*(cnst2 - cnst1)/l2"
+  4u
+
   p1 ph1
-  p30:gp6*diff
+  p30:gp6*cnst0
   d16
   p2 ph2
-  p30:gp6*-1*diff
+  p30:gp6*-1*cnst0
   d16
   p1 ph3
   p19:gp7
   d16
   DELTA1
   p1 ph4
-  p30:gp6*diff
+  p30:gp6*cnst0
   d16
   p2 ph2
-  p30:gp6*-1*diff
+  p30:gp6*-1*cnst0
   d16
   p16:gp1
   d16 pl18:f1
@@ -107,7 +118,7 @@ define list<gradient> diff=<Difframp>
   d16
   4u BLKGRAD
   go=2 ph31 
-  d1 mc #0 to 2 F1QF(igrad diff)
+  d1 mc #0 to 2 F1QF(iu1)
 exit
 
 

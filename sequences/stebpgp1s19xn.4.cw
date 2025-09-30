@@ -1,10 +1,10 @@
 ;@ schema_version: "0.0.1"
-;@ sequence_version: "1.0.0"
+;@ sequence_version: "2.0.0"
 ;@ title: 15N XSTE diffusion
 ;@ description: |
 ;@   15N XSTE diffusion measurement
 ;@
-;@   - with 1H decoupling
+;@   - using hard-coded linear gradient from 5-95% of max
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ citation:
@@ -12,7 +12,7 @@
 ;@ created: 2020-09-04
 ;@ last_modified: 2025-09-30
 ;@ repository: github.com/waudbygroup/pulseprograms
-;@ status: stable
+;@ status: experimental
 ;@ experiment_type: [diffusion, 1d]
 ;@ features: [xste, watergate]
 ;@ nuclei_hint: [1H, 13C, 15N]
@@ -27,8 +27,9 @@
 ;@ - coherence: [f1, 1]
 ;@ - big-delta: d20
 ;@ - little-delta: p31
+;@ - tau: d17
 ;@ - Gmax: gpz6
-;@ - g: <Difframp>
+;@ - g: [linear, cnst1, cnst2]
 ;@ - shape: gpnam6
 
 
@@ -47,7 +48,7 @@
 ;From MH_XSte
 ;Modified to use convention that d20 is equal to big delta
 ;Reduced time between gradient pulses in bipolar pairs (tau):
-;    tau = d16 + p22
+;    tau = d16 + p22 = d17
 ;
 ;H-1/X correlation via double refocused inept transfer
 ;ste during the transfer steps and storage of the magnetization on the X-nucleus during the diffusion delay
@@ -72,15 +73,15 @@ define list<gradient> diff=<Difframp>
 
 "p2=p1*2"
 "p22=p21*2"
+
 "p31=p30*2"
+"d17=d16+p22"
 
 "d11=30m"
 "d12=20u"
 "d13=4u"
 "d15=50u"
-;"d4=1s/(cnst4*4)-p30-d16-larger(p21,p1)"
-;"d5=1s/(cnst4*4)-p19-d16-larger(p21,p1)"
-;"d6=1s/(cnst4*4)-p19-d16-larger(p21,p1)-p11-d12"
+
 "d4=2.77m-p30-d16-larger(p21,p1)"
 "d5=2.77m-p19-d16-larger(p21,p1)"
 "d6=2.77m-p19-d16-larger(p21,p1)-p11-d12"
@@ -90,12 +91,18 @@ define list<gradient> diff=<Difframp>
 "TAU=p1*0.63662+de"
 "acqt0=de"
 
+"l1=0"
+"l2=td1-1"
+"cnst1=0.05"
+"cnst2=0.95"
+
 1 ze
   d11
   d12 BLKGRAD
 2 d11 do:f3
 3 d11
 4 d11
+  "cnst0=cnst1 + l1*(cnst2 - cnst1)/l2"
 
 # ifdef CRUSHER
 
@@ -130,10 +137,10 @@ define list<gradient> diff=<Difframp>
   d12 pl1:f1
   (p1 ph4):f1
   d4
-  p30:gp6*diff                		;gradient encoding
+  p30:gp6*cnst0                		;gradient encoding
   d16
   (center (p2 ph4):f1 (p22 ph4):f3)
-  p30:gp6*-1*diff                     ;gradient encoding
+  p30:gp6*-1*cnst0                     ;gradient encoding
   d16
   d4
   (p1 ph1):f1
@@ -169,10 +176,10 @@ define list<gradient> diff=<Difframp>
   d13
   (p1 ph2):f1
   d4
-  p30:gp6*diff                     	;gradient decoding
+  p30:gp6*cnst0                     	;gradient decoding
   d16
   (center (p2 ph2):f1 (p22 ph4):f3)
-  p30:gp6*-1*diff                     ;gradient decoding
+  p30:gp6*-1*cnst0                     ;gradient decoding
   d16
   d4
 
@@ -200,9 +207,12 @@ define list<gradient> diff=<Difframp>
   4u BLKGRAD
   go=2 ph31 cpd3:f3
   4u do:f3
-  d11 wr #0 if #0 zd igrad diff
+  d11 wr #0 if #0 zd iu1
   lo to 3 times td1
   d11 rf #0
+  4u
+  "l1=0"
+  4u
   lo to 4 times td0
 exit
 

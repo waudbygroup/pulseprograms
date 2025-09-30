@@ -24,7 +24,7 @@
 ;@ - {channel: f2, length: p3, power: pl2}
 ;@ decoupling_pulse:
 ;@ - {channel: f2, length: p4, power: pl12, program: cpdprg2}
-;@ spinlock: {channel: f1, power: <$VALIST>, duration: <$VPLIST>, offset: 0, alignment: hard_pulse}
+;@ spinlock: {channel: f1, power: <$VALIST>, duration: <$VPLIST>, offset: 0, alignment: hard pulse}
 
 
 /*--------------------------------
