@@ -58,6 +58,7 @@ Use standard isotope notation: `1H`, `13C`, `15N`, `31P`, `19F`, etc.
 ### Relaxation
 
 Experiments with type `relaxation` should include an object `relaxation` with fields describing the following additional parameters:
+
 - `type`: `R1`, `R2`
 - `model`: `exponential-decay`, `inversion-recovery`, `saturation-recovery`
 - `channel`: corresponding to observed nucleus
@@ -74,6 +75,7 @@ For example:
 ### `cest`, `r1rho`
 
 Experiments with type `cest` or `r1rho` should include an object `spinlock` with fields describing the spinlock parameters:
+
 - `channel`: corresponding to observed nucleus
 - `power`
 - `duration`

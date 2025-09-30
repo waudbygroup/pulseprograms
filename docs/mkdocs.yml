@@ -84,8 +84,8 @@ nav:
     # - High Barrier: contributing/high-barrier.md
     # - Review Process: contributing/review.md
   - Annotation Schema:
-    - Current Schema: schema/current.md
     - Field Reference: schema/fields.md
+    - Current Schema: schema/current.md
   # - Community:
   #   - Guidelines: community/guidelines.md
   #   - Recognition: community/recognition.md
