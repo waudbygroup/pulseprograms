@@ -1,33 +1,34 @@
 ;@ schema_version: "0.0.1"
 ;@ sequence_version: "1.0.0"
 ;@ title: SOFAST-HMQC
-;@ description: 1H,15N SOFAST-HMQC for rapid or sensitive measurements
+;@ description: |
+;@   1H,15N SOFAST-HMQC
+;@
+;@   - for rapid or sensitive measurements
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@   - P. Schanda
+;@ citation:
+;@   - Schanda & Brutscher, J. Am. Chem. Soc. (2005) 127, 8014
+;@ doi:
+;@   - 10.1021/ja051306e
 ;@ created: 2024-01-15
 ;@ last_modified: 2025-08-15
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: stable
 ;@ experiment_type: [hmqc, 2d]
-;@ features: [sofast, sensitivity enhancement, selective excitation, presaturation]
+;@ features: [sofast, selective excitation, presaturation, phase sensitive]
 ;@ nuclei_hint: [1H, 13C, 15N]
-;@ citation:
-;@   - Schanda & Brutscher, J. Am. Chem. Soc. (2005) 127, 8014
-;@ doi:
-;@   - 10.1021/ja051306e
+;@ dimensions: [f3, f1]
+#ifdef LABEL_CN
+;@ decoupling: [[f1,f2], f3]
+#else
+;@ decoupling: [f1, f3]
+#endif
+;@ acquisition_order: [2, 1]
+;@ quadrature: [states-tppi, direct]
 
 
-;sfhmqcf3gpph
-;avance-version (09/11/18)
-;SOFAST HMQC
-;2D H-1/X correlation via heteronuclear zero and double quantum
-;   coherence
-;phase sensitive
-;with decoupling during acquisition
-;
-;P.Schanda and B. Brutscher, J. Am. Chem. Soc. 127, 8014 (2005)
-;
 ;$CLASS=HighRes
 ;$DIM=2D
 ;$TYPE=

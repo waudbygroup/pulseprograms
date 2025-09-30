@@ -22,7 +22,7 @@ Complete reference for all metadata fields in pulse sequence annotations.
 | `experiment_type` | array | Experiment keywords | `["hsqc", "2d"]` |
 | `description` | string | Detailed description | `"1H,15N SOFAST-HMQC..."` |
 | `features` | array | Technical features | `["trosy", "sofast"]` |
-| `nuclei_hint` | array | Nuclei involved | `["1H", "15N"]` |
+| `nuclei_hint` | array | Suggested mapping of nuclei to channels | `["1H", "15N"]` |
 | `citation` | array | Literature references | `["Author et al., Journal (Year)"]` |
 | `doi` | array | DOI identifiers | `["10.1021/ja051306e"]` |
 

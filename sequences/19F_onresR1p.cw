@@ -4,6 +4,11 @@
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@   - Jan Overbeck
+;@ citation:
+;@   - Hazlett et al. ChemRxiv (2025)
+;@   - Overbeck (2020)
+;@ doi:
+;@   - 10.26434/chemrxiv-2025-vt1wg
 ;@ created: 2020-01-01
 ;@ last_modified: 2025-08-01
 ;@ repository: github.com/waudbygroup/pulseprograms
@@ -11,17 +16,15 @@
 ;@ experiment_type: [r1rho, 1d]
 ;@ features: [relaxation dispersion, on-resonance, temperature compensation]
 ;@ nuclei_hint: [19F, 1H]
-;@ citation:
-;@   - Overbeck (2020)
 ;@ dimensions: [spinlock_duration, spinlock_power, f1]
-;@ acquisition_order: [3, 1, 2]
 ;@ decoupling: [nothing, nothing, f2]
+;@ acquisition_order: [3, 1, 2]
 ;@ hard_pulse:
 ;@ - {channel: f1, length: p1, power: pl1}
 ;@ - {channel: f2, length: p3, power: pl2}
 ;@ decoupling_pulse:
 ;@ - {channel: f2, length: p4, power: pl12, program: cpdprg2}
-;@ spinlock: {channel: f1, power: <VALIST>, duration: <VPLIST>, offset: 0, alignment: hard_pulse}
+;@ spinlock: {channel: f1, power: <$VALIST>, duration: <$VPLIST>, offset: 0, alignment: hard_pulse}
 
 
 /*--------------------------------
