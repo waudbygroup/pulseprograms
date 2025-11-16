@@ -135,7 +135,7 @@ properties:
     type: array
     items:
       type: object
-      required: ["channel", "pulse", "power"]
+      required: ["channel", "duration", "power"]
       properties:
         channel:
           type: string
