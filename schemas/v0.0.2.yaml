@@ -141,10 +141,10 @@ properties:
           type: string
           pattern: "^f[1-8]$"
           description: "Spectrometer channel (f1-f8)"
-        pulse:
+        duration:
           type: string
           pattern: "^p\\d+$"
-          description: "Pulse parameter name (e.g., p1, p21)"
+          description: "Pulse length parameter name (e.g., p1, p21)"
         power:
           type: string
           pattern: "^pl\\d+$"
