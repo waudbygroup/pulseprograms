@@ -17,11 +17,12 @@ required:
   - last_modified
   - repository
   - status
+  - experiment_type
 
 properties:
   schema_version:
     type: string
-    pattern: "^0\\.0\\.1$"
+    pattern: "^\\d+\\.\\d+\\.\\d+$"
     description: "Version of this annotation schema"
     
   sequence_version:
@@ -64,28 +65,38 @@ properties:
     pattern: "^[a-zA-Z0-9._/-]+$"
     description: "Repository identifier (e.g., github.com/user/repo)"
 
-  # Optional fields
+  status:
+    type: string
+    enum: ["experimental", "beta", "stable", "deprecated"]
+    description: "Development/validation status"
+
   experiment_type:
     type: array
     items:
       type: string
       minLength: 1
-    description: "Array of experiment type keywords"
+    minItems: 1
+    description: "Array of experiment type keywords (see VOCABULARY.md)"
 
+  # Optional fields
   features:
     type: array
     items:
       type: string
       minLength: 1
-    description: "Array of feature keywords"
-    
+    description: "Array of feature keywords (see VOCABULARY.md)"
+
   typical_nuclei:
     type: array
     items:
-      type: string
-      pattern: "^\\d+[A-Z][a-z]?$"
-      description: "Nucleus in standard isotope notation (e.g., 1H, 13C)"
-    description: "Nuclei recommended for the experiment"
+      oneOf:
+        - type: string
+          pattern: "^\\d+[A-Z][a-z]?$"
+          description: "Nucleus in standard isotope notation (e.g., 1H, 13C, 19F)"
+        - type: string
+          enum: ["nothing"]
+          description: "Placeholder for unused channel"
+    description: "Typical nuclei for this sequence, ordered by spectrometer channel (f1, f2, f3, ...). Use 'nothing' for unused channels."
     
   description:
     type: string
@@ -105,10 +116,40 @@ properties:
       type: string
       pattern: "^10\\..+/.+$"
     description: "DOI identifiers for related publications"
-    
-  status:
-    type: string
-    enum: ["experimental", "beta", "stable", "deprecated"]
-    description: "Development/validation status"
+
+  dimensions:
+    type: array
+    items:
+      type: string
+      minLength: 1
+    description: "List of dimension identifiers using dotted path notation (e.g., relaxation.duration, f1)"
+
+  acquisition_order:
+    type: array
+    items:
+      type: string
+      minLength: 1
+    description: "Acquisition loop order from innermost to outermost using dimension names"
+
+  reference_pulse:
+    type: array
+    items:
+      type: object
+      required: ["channel", "pulse", "power"]
+      properties:
+        channel:
+          type: string
+          pattern: "^f[1-8]$"
+          description: "Spectrometer channel (f1-f8)"
+        pulse:
+          type: string
+          pattern: "^p\\d+$"
+          description: "Pulse parameter name (e.g., p1, p21)"
+        power:
+          type: string
+          pattern: "^pl\\d+$"
+          description: "Power parameter name (e.g., pl1, pl21)"
+    description: "Reference pulse calibrations for power calculations"
+
 
 additionalProperties: true  # Allow community to add informal fields
