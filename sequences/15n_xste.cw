@@ -43,7 +43,7 @@ prosol relations=<triple_d>
 "p22=p21*2"
 
 "p31=p30*2"
-"d17=d16+p22"
+"d17=p30+d16+p22"
 
 "d11=30m"
 "d12=20u"
