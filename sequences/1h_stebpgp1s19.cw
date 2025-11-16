@@ -161,9 +161,3 @@ ph31=0 1 2 3  0 1 2 3  2 3 0 1  2 3 0 1
 ;gpnam1: SINE.100
 ;gpnam6: SINE.100
 ;gpnam7: SINE.100
-
-;use AU-program dosy to calculate gradient-file Difframp
-
-
-
-;$Id: stebpgp1s19,v 1.4.6.1 2007/05/09 09:36:59 ber Exp $

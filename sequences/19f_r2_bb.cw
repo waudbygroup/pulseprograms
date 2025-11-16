@@ -1,25 +1,25 @@
 ;@ schema_version: "0.0.2"
 ;@ sequence_version: "0.1.1"
-;@ title: 19F R2 (Perfect echo)
+;@ title: 19F R2 (Hahn-echo)
 ;@ description: |
-;@   1D 19F broadband R2 perfect echo measurement
+;@   1D 19F broadband R2 Hahn-echo measurement
 ;@
 ;@   - with 1H decoupling
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
-;@ created: 2024-10-08
+;@ created: 2024-05-21
 ;@ last_modified: 2025-11-15
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [relaxation, 1d]
-;@ features: [R2, perfect_echo, broadband]
+;@ features: [R2, hahn_echo, broadband]
 ;@ typical_nuclei: [19F, 1H]
 ;@ dimensions: [relaxation.duration, f1]
 ;@ acquisition_order: [f1, relaxation.duration]
 ;@ reference_pulse:
 ;@ - {channel: f1, pulse: p1, power: pl1}
+;@ - {channel: f2, pulse: p3, power: pl2}
 ;@ relaxation: {type: R2, model: exponential-decay, channel: f1, duration: t2delay}
-
 
 
 #include <Avance.incl>
@@ -49,7 +49,7 @@ define list<delay> t2delay = <$VDLIST>
   d11 pl12:f2
 2 30m do:f2
 
-  "DELTA=t2delay[l1]*0.25"
+  "DELTA=t2delay[l1]*0.5"
 
   ; purge
   ;20u pl11:f1
@@ -61,13 +61,9 @@ define list<delay> t2delay = <$VDLIST>
   d1
 
   ; 90
-  (p20:sp20 ph1):f1  ; x (p2p)
+  (p20:sp20 ph1):f1
   DELTA
   (p21:sp21 ph2):f1
-  DELTA
-  (p22:sp22 ph3):f1  ; y (90 unitary)
-  DELTA
-  (p21:sp21 ph4):f1
   DELTA
 
   go=2 ph31 cpd2:f2
@@ -79,10 +75,7 @@ exit
 
 ph1 =0 2
 ph2 =0 0 1 1 2 2 3 3
-ph3 =1
-ph4 =0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1
-     2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3
-ph31=0 2 2 0 0 2 2 0 2 0 0 2 2 0 0 2
+ph31=0 2 2 0
 
 ;pl12: f2 channel - power level for CPD/BB decoupling
 ;p16: homospoil/gradient pulse                       [0.5 msec]
@@ -92,17 +85,11 @@ ph31=0 2 2 0 0 2 2 0 2 0 0 2 2 0 0 2
 ;d16: delay for homospoil/gradient recovery
 ;cpd2: decoupling according to sequence defined by cpdprg2
 ;pcpd2: f2 channel - 90 degree pulse for decoupling sequence
-;p20: 1000us
-;spnam20: pulse_19F_Iz-Iy_0_15625_1000_100_0
-;sp20: 16 kHz
-;p21: 2000us
-;spnam21: pulse_19F_180x_0_15625_2000_100_0
-;sp21: 16 kHz
-;p22: 1000us
-;spnam22: pulse_19F_90x_0_15625_1000_100_0
-;sp22: 16 kHz
-;ns: 16 * n
-;ds: 16
+;p20: 600us BURBOP_19F_90
+;spnam20: BURBOP_19F_90
+;sp20: 20 kHz
+;ns: 1 * n
+;ds: 4
 
 
 ;for z-only gradients:

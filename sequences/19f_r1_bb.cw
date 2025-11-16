@@ -1,8 +1,8 @@
 ;@ schema_version: "0.0.2"
 ;@ sequence_version: "0.1.1"
-;@ title: 19F R2 (Hahn-echo)
+;@ title: 19F R1
 ;@ description: |
-;@   1D 19F broadband R2 Hahn-echo measurement
+;@   1D 19F broadband R1 measurement
 ;@
 ;@   - with 1H decoupling
 ;@ authors:
@@ -12,20 +12,21 @@
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [relaxation, 1d]
-;@ features: [R2, hahn_echo, broadband]
+;@ features: [R1, inversion_recovery, broadband]
 ;@ typical_nuclei: [19F, 1H]
 ;@ dimensions: [relaxation.duration, f1]
 ;@ acquisition_order: [f1, relaxation.duration]
 ;@ reference_pulse:
 ;@ - {channel: f1, pulse: p1, power: pl1}
-;@ relaxation: {type: R2, model: exponential-decay, channel: f1, duration: t2delay}
+;@ - {channel: f2, pulse: p3, power: pl2}
+;@ relaxation: {type: R1, model: inversion_recovery, channel: f1, duration: t1delay}
 
 
 #include <Avance.incl>
 #include <Grad.incl>
 #include <Delay.incl>
 
-define list<delay> t2delay = <$VDLIST>
+define list<delay> t1delay = <$VDLIST>
 /****************************/
 /* Initialize loop counters */
 /****************************/
@@ -48,7 +49,7 @@ define list<delay> t2delay = <$VDLIST>
   d11 pl12:f2
 2 30m do:f2
 
-  "DELTA=t2delay[l1]*0.5"
+  "DELTA=t1delay[l1]-p16-d16-4u"
 
   ; purge
   ;20u pl11:f1
@@ -59,11 +60,14 @@ define list<delay> t2delay = <$VDLIST>
   ; d1
   d1
 
-  ; 90
+  4u UNBLKGRAD
+  (p21:sp21 ph1):f1
+  p16:gp1
+  d16
+  4u BLKGRAD
+  DELTA
+  ; 90 read-out
   (p20:sp20 ph1):f1
-  DELTA
-  (p21:sp21 ph2):f1
-  DELTA
 
   go=2 ph31 cpd2:f2
   d11 do:f2 mc #0 to 2 
@@ -72,9 +76,8 @@ define list<delay> t2delay = <$VDLIST>
 exit 
  
 
-ph1 =0 2
-ph2 =0 0 1 1 2 2 3 3
-ph31=0 2 2 0
+ph1 =0 2 1 3
+ph31=0 2 1 3
 
 ;pl12: f2 channel - power level for CPD/BB decoupling
 ;p16: homospoil/gradient pulse                       [0.5 msec]

@@ -1,8 +1,8 @@
 ;@ schema_version: "0.0.2"
 ;@ sequence_version: "0.2.0"
-;@ title: Pulse Nutation Calibration
+;@ title: Pulse nutation calibration
 ;@ description: |
-;@   19F Pulse Nutation Calibration
+;@   19F Pulse mutation calibration
 ;@
 ;@   - place calibration signal on-resonance
 ;@   - set cnst8 to nominal rf field in Hz (e.g. 60 for 60 Hz)
