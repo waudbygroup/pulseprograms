@@ -17,7 +17,6 @@
 ;@ typical_nuclei: [19F]
 ;@ dimensions: [cest.offset, f1]
 ;@ acquisition_order: [f1, cest.offset]
-;@ decoupling: [nothing, nothing]
 ;@ reference_pulse:
 ;@ - {channel: f1, pulse: p1, power: pl1}
 ;@ cest: {channel: f1, power: pl8, duration: d18, offset: F19sat}
