@@ -22,9 +22,9 @@
 ;@ dimensions: [f3, f1]
 ;@ acquisition_order: [f1, f3]
 ;@ reference_pulse:
-;@ - {channel: f1, pulse: p1, power: pl1}
-;@ - {channel: f2, pulse: p3, power: pl2}
-;@ - {channel: f3, pulse: p21, power: pl3}
+;@ - {channel: f1, duration: p1, power: pl1}
+;@ - {channel: f2, duration: p3, power: pl2}
+;@ - {channel: f3, duration: p21, power: pl3}
 
 
 ;$CLASS=HighRes

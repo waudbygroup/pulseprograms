@@ -206,8 +206,8 @@ type of syntax to parse.
 **Decision:** Use `reference_pulse` field to document the fundamental power calibration for each channel, replacing the initial `hard_pulse` field.
 ```yaml
 ;@ reference_pulse:
-;@ - {channel: f1, pulse: p1, power: pl1}
-;@ - {channel: f3, pulse: p21, power: pl21}
+;@ - {channel: f1, duration: p1, power: pl1}
+;@ - {channel: f3, duration: p21, power: pl21}
 ```
 
 Reference pulses are assumed to be 90° hard pulses unless otherwise noted in the sequence description.

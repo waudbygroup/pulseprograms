@@ -19,7 +19,7 @@
 ;@ dimensions: [diffusion.gradient_strength, f1]
 ;@ acquisition_order: [f1, diffusion.gradient_strength]
 ;@ reference_pulse:
-;@ - {channel: f1, pulse: p1, power: pl1}
+;@ - {channel: f1, duration: p1, power: pl1}
 ;@ diffusion:
 ;@   type: bipolar
 ;@   coherence: [f1, 1]

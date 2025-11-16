@@ -17,8 +17,8 @@
 ;@ dimensions: [relaxation.duration, f1]
 ;@ acquisition_order: [f1, relaxation.duration]
 ;@ reference_pulse:
-;@ - {channel: f1, pulse: p1, power: pl1}
-;@ - {channel: f2, pulse: p3, power: pl2}
+;@ - {channel: f1, duration: p1, power: pl1}
+;@ - {channel: f2, duration: p3, power: pl2}
 ;@ relaxation: {type: R2, model: exponential-decay, channel: f1, duration: t2delay}
 
 

@@ -22,7 +22,7 @@
 ;@ dimensions: [calibration.duration, f1]
 ;@ acquisition_order: [f1, calibration.duration]
 ;@ reference_pulse:
-;@ - {channel: f1, pulse: p1, power: pl1}
+;@ - {channel: f1, duration: p1, power: pl1}
 ;@ calibration:
 ;@   type: nutation
 ;@   channel: f1
