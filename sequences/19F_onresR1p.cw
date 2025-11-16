@@ -1,5 +1,5 @@
-;@ schema_version: "0.0.1"
-;@ sequence_version: "0.1.0"
+;@ schema_version: "0.0.2"
+;@ sequence_version: "0.1.1"
 ;@ title: 19F on-resonance R1rho relaxation dispersion
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
@@ -10,21 +10,17 @@
 ;@ doi:
 ;@   - 10.26434/chemrxiv-2025-vt1wg
 ;@ created: 2020-01-01
-;@ last_modified: 2025-08-01
+;@ last_modified: 2025-11-15
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [r1rho, 1d]
-;@ features: [relaxation dispersion, on-resonance, temperature compensation]
-;@ nuclei_hint: [19F, 1H]
-;@ dimensions: [spinlock_duration, spinlock_power, f1]
-;@ decoupling: [nothing, nothing, f2]
-;@ acquisition_order: [3, 1, 2]
-;@ hard_pulse:
-;@ - {channel: f1, length: p1, power: pl1}
-;@ - {channel: f2, length: p3, power: pl2}
-;@ decoupling_pulse:
-;@ - {channel: f2, length: p4, power: pl12, program: cpdprg2}
-;@ spinlock: {channel: f1, power: <$VALIST>, duration: <$VPLIST>, offset: 0, alignment: hard pulse}
+;@ features: [relaxation_dispersion, on_resonance, temperature_compensation]
+;@ typical_nuclei: [19F]
+;@ dimensions: [r1rho.duration, r1rho.power, f1]
+;@ acquisition_order: [f1, r1rho.duration, r1rho.power]
+;@ reference_pulse:
+;@ - {channel: f1, pulse: p1, power: pl1}
+;@ r1rho: {channel: f1, power: powerlist, duration: taulist, offset: 0, alignment: hard_pulse}
 
 
 /*--------------------------------
@@ -42,8 +38,8 @@
 #include <Grad.incl>
 #include <Delay.incl>
 
-define list<pulse> plength = <$VPLIST>
-define list<power> list1 = <$VALIST>
+define list<pulse> taulist = <$VPLIST>
+define list<power> powerlist = <$VALIST>
 
 "p2=p1*2"
 "d11=30m"
@@ -56,7 +52,7 @@ aqseq 312
 /*--------------------------------
 ; calculate SL delays
 ; -------------------------------*/
- "p32=plength[l2]"
+ "p32=taulist[l2]"
 
 
 /* ---------------------------------
@@ -68,7 +64,7 @@ aqseq 312
 /* ---------------------------------
 ; heating compensation
 ; --------------------------------*/
-"p31=p30-p32*pow(10,(pl30 - list1)/10)"
+"p31=p30-p32*pow(10,(pl30 - powerlist)/10)"
 
 if "p31 > 0.0"
  {
@@ -92,7 +88,7 @@ else
  {
  1u pl1:f1
  p1 ph4
- 1u list1:f1
+ 1u powerlist:f1
  (p32 ph1):f1 ; <-- this is the Spin Lock
 }
 ;-----------------------------------
@@ -119,7 +115,7 @@ else
  go=2 ph31
  30m mc #0 to 2
    F1QF(calclc(l2,1))
-   F2QF(calclist(list1,1))
+   F2QF(calclist(powerlist,1))
 ;exit
 HaltAcqu, 1m
 exit

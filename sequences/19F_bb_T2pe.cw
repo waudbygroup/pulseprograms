@@ -1,5 +1,5 @@
-;@ schema_version: "0.0.1"
-;@ sequence_version: "0.1.0"
+;@ schema_version: "0.0.2"
+;@ sequence_version: "0.1.1"
 ;@ title: 19F R2 (Perfect echo)
 ;@ description: |
 ;@   1D 19F broadband R2 perfect echo measurement
@@ -8,18 +8,17 @@
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2024-10-08
-;@ last_modified: 2025-09-30
+;@ last_modified: 2025-11-15
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [relaxation, 1d]
-;@ features: [perfect echo]
-;@ nuclei_hint: [19F, 1H]
-;@ dimensions: [relaxation_time, f1]
-;@ acquisition_order: [2, 1]
-;@ decoupling: [nothing, f2]
-;@ hard_pulse:
-;@ - {channel: f1, length: p1, power: pl1}
-;@ relaxation: {type: R2, model: exponential-decay, channel: f1, duration: <$VDLIST>}
+;@ features: [R2, perfect_echo, broadband]
+;@ typical_nuclei: [19F, 1H]
+;@ dimensions: [relaxation.duration, f1]
+;@ acquisition_order: [f1, relaxation.duration]
+;@ reference_pulse:
+;@ - {channel: f1, pulse: p1, power: pl1}
+;@ relaxation: {type: R2, model: exponential-decay, channel: f1, duration: t2delay}
 
 
 

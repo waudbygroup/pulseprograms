@@ -110,7 +110,7 @@ Bruker pulse program files with embedded YAML metadata using `;@` comment syntax
 ;@ title: SOFAST-HMQC
 ;@ experiment_type: [hmqc, 2d]
 ;@ features: [sofast, sensitivity_enhancement, selective_excitation]
-;@ nuclei_hint: [1H, 13C, 15N]
+;@ typical_nuclei: [1H, 13C, 15N]
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@   - P. Schanda

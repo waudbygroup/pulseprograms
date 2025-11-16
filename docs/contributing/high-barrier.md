@@ -21,7 +21,7 @@ For users who want maximum control and searchability for their sequences.
 ;@ title: SOFAST-HMQC with TROSY
 ;@ experiment_type: [hmqc, 2d, trosy]
 ;@ features: [sofast, sensitivity_enhancement, selective_excitation, trosy]
-;@ nuclei_hint: [1H, 15N]
+;@ typical_nuclei: [1H, 15N]
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@   - P. Schanda

@@ -1,5 +1,5 @@
-;@ schema_version: "0.0.1"
-;@ sequence_version: "0.1.0"
+;@ schema_version: "0.0.2"
+;@ sequence_version: "0.1.1"
 ;@ title: 19F R1
 ;@ description: |
 ;@   1D 19F broadband R1 measurement
@@ -8,18 +8,17 @@
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2024-05-21
-;@ last_modified: 2025-09-30
+;@ last_modified: 2025-11-15
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [relaxation, 1d]
-;@ nuclei_hint: [19F, 1H]
-;@ dimensions: [relaxation_time, f1]
-;@ acquisition_order: [2, 1]
-;@ decoupling: [nothing, f2]
-;@ hard_pulse:
-;@ - {channel: f1, length: p1, power: pl1}
-;@ relaxation: {type: R1, model: inversion-recovery, channel: f1, duration: <$VDLIST>}
-
+;@ features: [R1, inversion_recovery, broadband]
+;@ typical_nuclei: [19F, 1H]
+;@ dimensions: [relaxation.duration, f1]
+;@ acquisition_order: [f1, relaxation.duration]
+;@ reference_pulse:
+;@ - {channel: f1, pulse: p1, power: pl1}
+;@ relaxation: {type: R1, model: inversion_recovery, channel: f1, duration: t1delay}
 
 
 #include <Avance.incl>

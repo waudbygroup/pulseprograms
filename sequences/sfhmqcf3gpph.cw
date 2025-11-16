@@ -1,5 +1,5 @@
-;@ schema_version: "0.0.1"
-;@ sequence_version: "1.0.0"
+;@ schema_version: "0.0.2"
+;@ sequence_version: "1.0.1"
 ;@ title: SOFAST-HMQC
 ;@ description: |
 ;@   1H,15N SOFAST-HMQC
@@ -13,20 +13,18 @@
 ;@ doi:
 ;@   - 10.1021/ja051306e
 ;@ created: 2024-01-15
-;@ last_modified: 2025-08-15
+;@ last_modified: 2025-11-15
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: stable
 ;@ experiment_type: [hmqc, 2d]
-;@ features: [sofast, selective excitation, presaturation, phase sensitive]
-;@ nuclei_hint: [1H, 13C, 15N]
+;@ features: [sofast, states_tppi]
+;@ typical_nuclei: [1H, 13C, 15N]
 ;@ dimensions: [f3, f1]
-#ifdef LABEL_CN
-;@ decoupling: [[f1,f2], f3]
-#else
-;@ decoupling: [f1, f3]
-#endif
-;@ acquisition_order: [2, 1]
-;@ quadrature: [states-tppi, direct]
+;@ acquisition_order: [f1, f3]
+;@ reference_pulse:
+;@ - {channel: f1, pulse: p1, power: pl1}
+;@ - {channel: f2, pulse: p3, power: pl2}
+;@ - {channel: f3, pulse: p21, power: pl3}
 
 
 ;$CLASS=HighRes

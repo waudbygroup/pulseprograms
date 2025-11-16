@@ -1,5 +1,5 @@
-;@ schema_version: "0.0.1"
-;@ sequence_version: "2.0.0"
+;@ schema_version: "0.0.2"
+;@ sequence_version: "2.0.1"
 ;@ title: 15N XSTE diffusion
 ;@ description: |
 ;@   15N XSTE diffusion measurement
@@ -10,53 +10,27 @@
 ;@ citation:
 ;@   - Ferrage et al., JACS (2004) 126:5654
 ;@ created: 2020-09-04
-;@ last_modified: 2025-09-30
+;@ last_modified: 2025-11-15
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: experimental
 ;@ experiment_type: [diffusion, 1d]
 ;@ features: [xste, watergate]
-;@ nuclei_hint: [1H, 13C, 15N]
-;@ dimensions: [gradient_strength, f1]
-;@ acquisition_order: [2, 1]
-;@ decoupling: [nothing, f3]
-;@ hard_pulse:
-;@ - {channel: f1, length: p1, power: pl1}
-;@ - {channel: f3, length: p21, power: pl21}
+;@ typical_nuclei: [1H, 13C, 15N]
+;@ dimensions: [diffusion.gradient_strength, f1]
+;@ acquisition_order: [f1, diffusion.gradient_strength]
+;@ reference_pulse:
+;@ - {channel: f1, pulse: p1, power: pl1}
+;@ - {channel: f3, pulse: p21, power: pl21}
 ;@ diffusion:
-;@ - type: bipolar
-;@ - coherence: [f1, 1]
-;@ - big-delta: d20
-;@ - little-delta: p31
-;@ - tau: d17
-;@ - Gmax: gpz6
-;@ - g: [linear, cnst1, cnst2]
-;@ - shape: gpnam6
+;@   type: bipolar
+;@   coherence: [f1, 1]
+;@   big_delta: d20
+;@   little_delta: p31
+;@   tau: d17
+;@   gradient_strength: {type: linear, start: cnst1, end: cnst2, scale: gpz6}
+;@   gradient_shape: gpnam6
 
 
-
-
-;Mar 2017: added CPD and baseopt
-;
-;Sep 2014: added option for alternative gradient ramp file
-;
-;May 2013: separate power levels for water flipback and flipdown pulses
-;Adjusted delays for zero first-order phase correction
-;
-;With possibility for multiple acquistion blocks when NS > phase cycle
-;  => set TD0 > 1 (total scans = TD0*NS)
-;
-;From MH_XSte
-;Modified to use convention that d20 is equal to big delta
-;Reduced time between gradient pulses in bipolar pairs (tau):
-;    tau = d16 + p22 = d17
-;
-;H-1/X correlation via double refocused inept transfer
-;ste during the transfer steps and storage of the magnetization on the X-nucleus during the diffusion delay
-;watergate after the decoding gradients for use with z-only gradient probes
-;1D version
-;written by Fabien Ferrage, last modification November 22nd 2004
-;
-;Ferrage et al., JACS (2004) 126:5654
 
 prosol relations=<triple_d>
 
@@ -64,12 +38,6 @@ prosol relations=<triple_d>
 #include <Avance.incl>
 #include <Grad.incl>
 #include <Delay.incl>
-
-# ifdef ALT_RAMP
-define list<gradient> diff=<Difframp2>
-# else
-define list<gradient> diff=<Difframp>
-# endif /*ALT_RAMP*/
 
 "p2=p1*2"
 "p22=p21*2"

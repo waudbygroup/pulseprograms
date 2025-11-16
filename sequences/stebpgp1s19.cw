@@ -1,5 +1,5 @@
-;@ schema_version: "0.0.1"
-;@ sequence_version: "2.0.0"
+;@ schema_version: "0.0.2"
+;@ sequence_version: "2.0.1"
 ;@ title: 1H STE diffusion
 ;@ description: |
 ;@   1H STE diffusion measurement
@@ -9,29 +9,25 @@
 ;@   - Use for flat baselines (with baseopt)
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
-;@ citation:
-;@   - Ferrage et al., JACS (2004) 126:5654
 ;@ created: 2020-09-04
-;@ last_modified: 2025-09-30
+;@ last_modified: 2025-11-15
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: experimental
 ;@ experiment_type: [diffusion, 1d]
 ;@ features: [ste, watergate]
-;@ nuclei_hint: [1H]
-;@ dimensions: [gradient_strength, f1]
-;@ acquisition_order: [2, 1]
-;@ decoupling: [nothing, nothing]
-;@ hard_pulse:
-;@ - {channel: f1, length: p1, power: pl1}
+;@ typical_nuclei: [1H]
+;@ dimensions: [diffusion.gradient_strength, f1]
+;@ acquisition_order: [f1, diffusion.gradient_strength]
+;@ reference_pulse:
+;@ - {channel: f1, pulse: p1, power: pl1}
 ;@ diffusion:
-;@ - type: bipolar
-;@ - coherence: [f1, 1]
-;@ - big-delta: d20
-;@ - little-delta: p31
-;@ - tau: d17
-;@ - Gmax: gpz6
-;@ - g: [linear, cnst1, cnst2]
-;@ - shape: gpnam6
+;@   type: bipolar
+;@   coherence: [f1, 1]
+;@   big_delta: d20
+;@   little_delta: p31
+;@   tau: d17
+;@   gradient_strength: {type: linear, start: cnst1, end: cnst2, scale: gpz6}
+;@   gradient_shape: gpnam6
 
 
 

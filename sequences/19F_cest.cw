@@ -1,5 +1,5 @@
-;@ schema_version: "0.0.1"
-;@ sequence_version: "1.0.0"
+;@ schema_version: "0.0.2"
+;@ sequence_version: "0.1.1"
 ;@ title: 19F CEST
 ;@ description: |
 ;@   1D 19F CEST measurement
@@ -9,17 +9,18 @@
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2025-08-01
-;@ last_modified: 2025-08-01
+;@ last_modified: 2025-11-15
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [cest, 1d]
-;@ nuclei_hint: [19F]
-;@ dimensions: [spinlock_offset, f1]
-;@ acquisition_order: [2, 1]
+;@ features: []
+;@ typical_nuclei: [19F]
+;@ dimensions: [cest.offset, f1]
+;@ acquisition_order: [f1, cest.offset]
 ;@ decoupling: [nothing, nothing]
-;@ hard_pulse:
-;@ - {channel: f1, length: p1, power: pl1}
-;@ spinlock: {channel: f1, power: pl8, duration: d18, offset: <$FQ1LIST>}
+;@ reference_pulse:
+;@ - {channel: f1, pulse: p1, power: pl1}
+;@ cest: {channel: f1, power: pl8, duration: d18, offset: F19sat}
 
 #include <Avance.incl>
 #include <Grad.incl>
