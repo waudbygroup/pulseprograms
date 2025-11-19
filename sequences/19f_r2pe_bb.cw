@@ -1,5 +1,5 @@
 ;@ schema_version: "0.0.2"
-;@ sequence_version: "0.1.1"
+;@ sequence_version: "0.1.3"
 ;@ title: 19F R2 (Perfect echo)
 ;@ description: |
 ;@   1D 19F broadband R2 perfect echo measurement
@@ -73,7 +73,7 @@ define list<delay> t2delay = <$VDLIST>
 
   go=2 ph31 cpd2:f2
   d11 do:f2 mc #0 to 2 
-     F1QF(iu1)
+     F1QF(calclc(l1, 1))
 
 exit 
  

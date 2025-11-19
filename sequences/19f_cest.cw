@@ -1,5 +1,5 @@
 ;@ schema_version: "0.0.2"
-;@ sequence_version: "0.1.1"
+;@ sequence_version: "0.1.2"
 ;@ title: 19F CEST
 ;@ description: |
 ;@   1D 19F CEST measurement
@@ -61,7 +61,7 @@ define list<frequency> F19sat = <$FQ1LIST>
 
   go=2 ph31 
   d1 mc #0 to 2 
-     F1QF(F19sat.inc)
+     F1QF(calclist(F19sat, 1))
 
 exit 
   
