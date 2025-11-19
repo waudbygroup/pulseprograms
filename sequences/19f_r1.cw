@@ -76,11 +76,11 @@ define list<delay> t1delay = <$VDLIST>
 #ifdef HDEC
   go=2 ph31 cpd2:f2
   d11 do:f2 mc #0 to 2 
-     F1QF(t1_delay.inc)
+     F1QF(calclc(l1))
 #else
   go=2 ph31 
   d11 mc #0 to 2 
-     F1QF(t1_delay.inc)
+     F1QF(calclc(l1))
 #endif /* HDEC */
 
 exit 
