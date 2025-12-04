@@ -55,7 +55,7 @@ define list<power> powerlist = <$VALIST>
 "p2=p1*2"
 #ifdef HDEC
 "pcpd2=62.5u"          ; pulse length for 4kHz decoupling
-"plw8=plw2*pow(p3/pcpd2,2)"
+"plw12=plw2*pow(p3/pcpd2,2)"
 #endif /* HDEC */
 
 "d11=30m"

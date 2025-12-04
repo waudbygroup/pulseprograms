@@ -4,9 +4,9 @@
 ;@ description: |
 ;@   Off-resonance 19F R1rho as pseudo-3D
 ;@
-;@   - set nominal SL power (Hz) in CNST25
+;@   - set nominal SL power (Hz) in cnst25
 ;@   - set SL durations in VPLIST
-;@   - set SL offsets in FQ1LIST (must be !sfo hz!)
+;@   - set SL offsets in FQ1LIST **must be sfo hz**
 ;@   - 4x expected scans will be acquired to cover z/-z and theta/theta-bar
 ;@   - BUG - do not use any dummy scans!
 ;@   - tested with Topspin 3.7.0
@@ -30,7 +30,6 @@
 ;@ r1rho: {channel: f1, power: pl25, duration: taulist, offset: fqlist, alignment: hard_pulse}
 
 
-
 #include <Avance.incl>
 #include <Grad.incl>
 
@@ -40,7 +39,7 @@ define list<frequency> fqlist = <$FQ1LIST>
 "p2=p1*2"
 #ifdef HDEC
 "pcpd2=62.5u"          ; pulse length for 4kHz decoupling
-"plw8=plw2*pow(p3/pcpd2,2)"
+"plw12=plw2*pow(p3/pcpd2,2)"
 #endif /* HDEC */
 
 "d11=30m"
@@ -51,10 +50,10 @@ define list<frequency> fqlist = <$FQ1LIST>
 "p25=1000000/(4*cnst25)" ; SL 90 pulse length
 "plw25=plw1*pow(p1/p25,2)"
 "cnst28=fqlist"
-"p6 = ((cnst28)/((1/(p25*4))))"            ; spin lock offset / spin lock power
-"p7 = atan(p6)*180/PI"                    ; arc tan from this ratio = theta in deg
-"p4 = p1*(1-p7/90)"                                          ; theta pulse length
-"p5 = p1*(1+p7/90)"                                          ; 180-theta pulse length
+"p6 = ((cnst28)/((1/(p25*4))))"   ; spin lock offset / spin lock power
+"p7 = atan(p6)*180/PI"            ; arc tan from this ratio = theta in deg
+"p4 = p1*(1-p7/90)"               ; theta pulse length
+"p5 = p1*(1+p7/90)"               ; 180-theta pulse length
 
 "p30 = 1.01*taulist.max"  ; maximum SL length for T compentation
 
@@ -73,11 +72,11 @@ aqseq 312
 ; calculate hard pulse for offset
 ; dependent tip angle theta
 ; -------------------------------*/
-  "cnst28=fqlist"
-  "p6 = ((cnst28)/((1/(p25*4))))"            ; spin lock offset / spin lock power
-  "p7 = atan(p6)*180/PI"                    ; arc tan from this ratio = theta in deg
-  "p4 = p1*(1-p7/90)"                                          ; theta pulse length
-  "p5 = p1*(1+p7/90)"                                          ; 180-theta pulse length
+"cnst28=fqlist"
+"p6 = ((cnst28)/((1/(p25*4))))"   ; spin lock offset / spin lock power
+"p7 = atan(p6)*180/PI"            ; arc tan from this ratio = theta in deg
+"p4 = p1*(1-p7/90)"               ; theta pulse length
+"p5 = p1*(1+p7/90)"               ; 180-theta pulse length
 
 /* ---------------------------------
 ;     heating compensation
