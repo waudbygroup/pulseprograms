@@ -77,9 +77,9 @@ aqseq 312
 1 ze
 #ifdef HDEC
   d11 pl12:f2
-2 30m do:f2
+2 d11 do:f2
 #else
-2 30m
+2 d11
 #endif /* HDEC */
 /*--------------------------------
 ; set SL delays and power
@@ -101,8 +101,8 @@ aqseq 312
 
 if "p31 > 0.0"
  {
- 1u fq=cnst30(bf ppm):f1
- 1u pl30:f1
+ 4u fq=cnst30(bf ppm):f1
+ 4u pl30:f1
  (p31 ph1):f1
  }
 
@@ -147,12 +147,12 @@ else
 ; 4u BLKGRAD
 #ifdef HDEC
  go=2 ph31 cpd2:f2
- 30m do:f2 mc #0 to 2
+ d11 do:f2 mc #0 to 2
    F1QF(calclc(l2,1))
    F2QF(calclc(l3,1))
 #else
  go=2 ph31
- 30m mc #0 to 2
+ d11 mc #0 to 2
    F1QF(calclc(l2,1))
    F2QF(calclc(l3,1))
 #endif /* HDEC */
