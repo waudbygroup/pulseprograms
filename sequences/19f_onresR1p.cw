@@ -1,6 +1,14 @@
 ;@ schema_version: "0.0.2"
-;@ sequence_version: "0.1.1"
+;@ sequence_version: "0.1.2"
 ;@ title: 19F on-resonance R1rho relaxation dispersion
+;@ description: |
+;@   On-resonance 19F R1rho (pseudo-3D)
+;@
+;@   - set SL durations in VPLIST
+;@   - set SL power levels in VALIST !in dB!
+;@   - set cnst28 to the desired on-resonance offset (in ppm)
+;@   - with temperature compensation (set pl30 = maximum SL power)
+;@   - use '-DHDEC' for 1H decoupling during acquisition
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@   - Jan Overbeck
@@ -10,12 +18,12 @@
 ;@ doi:
 ;@   - 10.26434/chemrxiv-2025-vt1wg
 ;@ created: 2020-01-01
-;@ last_modified: 2025-11-15
+;@ last_modified: 2025-12-03
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [r1rho, 1d]
 ;@ features: [relaxation_dispersion, on_resonance, temperature_compensation]
-;@ typical_nuclei: [19F]
+;@ typical_nuclei: [19F, 1H]
 ;@ dimensions: [r1rho.duration, r1rho.power, f1]
 ;@ acquisition_order: [f1, r1rho.duration, r1rho.power]
 ;@ reference_pulse:
@@ -41,19 +49,35 @@
 define list<pulse> taulist = <$VPLIST>
 define list<power> powerlist = <$VALIST>
 
+; power (dB) for temperature compensation
+"cnst33=-10*log10(plw30)"
+"p30=taulist.max"
+
 "p2=p1*2"
+#ifdef HDEC
+"pcpd2=62.5u"          ; pulse length for 4kHz decoupling
+"plw8=plw2*pow(p3/pcpd2,2)"
+#endif /* HDEC */
+
 "d11=30m"
+
 "l2=0"
 "l3=0"
 aqseq 312
 
 1 ze
+#ifdef HDEC
+  d11 pl12:f2
+2 30m do:f2
+#else
 2 30m
+#endif /* HDEC */
 /*--------------------------------
-; calculate SL delays
+; set SL delays and power
 ; -------------------------------*/
- "p32=taulist[l2]"
-
+"p32=taulist[l2]"
+"powerlist.idx = l3"
+"p31=p30-p32*pow(10,(pl30 - powerlist[l3])/10)"
 
 /* ---------------------------------
 ; relaxation delay (d1)
@@ -64,7 +88,6 @@ aqseq 312
 /* ---------------------------------
 ; heating compensation
 ; --------------------------------*/
-"p31=p30-p32*pow(10,(pl30 - powerlist)/10)"
 
 if "p31 > 0.0"
  {
@@ -112,11 +135,19 @@ else
 ;------------------------------------
 
 ; 4u BLKGRAD
+#ifdef HDEC
+ go=2 ph31 cpd2:f2
+ 30m do:f2 mc #0 to 2
+   F1QF(calclc(l2,1))
+   F2QF(calclc(l3,1))
+#else
  go=2 ph31
  30m mc #0 to 2
    F1QF(calclc(l2,1))
-   F2QF(calclist(powerlist,1))
-;exit
+   F2QF(calclc(l3,1))
+#endif /* HDEC */
+ ; mc: F1(l2) = r1rho.duration
+ ;     F2(l3) = r1rho.power
 HaltAcqu, 1m
 exit
 
@@ -127,6 +158,7 @@ ph3=0 0 2 2 1 1 3 3
 ph4=1
 ph5=3
 ph31=0 2 2 0 1 3 3 1
+
 ;pl1 : f1 channel - power level for pulse (default)
 ;p1 : f1 channel - 90 degree high power pulse
 ;p2 : f1 channel - 180 degree high power pulse
@@ -135,10 +167,15 @@ ph31=0 2 2 0 1 3 3 1
 ;ns: 8 * n
 ;ds: 128
 
+;cnst28: offset for on-resonance spinlock (in ppm)
+
 ;p30: maximum SL length used for highest power (for T compensation)
 ;pl30: maximum SL power (for T compensation)
-;cnst30: offset of SL in ppm (for T compensation) [250 ppm]
+;cnst30: offset for T compensation (in ppm) [250 ppm]
 
-
-
-
+;1H decoupling:
+;pl2 : f2 channel - power level for pulse (default)
+;p3 : f2 channel - 90 degree high power pulse
+;pl12: f2 channel - power level for CPD/BB decoupling
+;cpd2: decoupling according to sequence defined by cpdprg2
+;pcpd2: f2 channel - 90 degree pulse for decoupling sequence
