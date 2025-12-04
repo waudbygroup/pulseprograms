@@ -9,7 +9,7 @@
 ;@   - pulse length will be incremented in 45 degree steps
 ;@   - use 16 points in indirect dimension for nominal 720 degree nutation
 ;@   - ensure d1 is long enough for full relaxation between scans
-;@
+;@   - tested with Topspin 3.7.0
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2020-09-04
