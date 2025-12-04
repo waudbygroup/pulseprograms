@@ -9,7 +9,7 @@
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2024-05-21
-;@ last_modified: 2025-11-15
+;@ last_modified: 2025-12-04
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [relaxation, 1d]
