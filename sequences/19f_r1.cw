@@ -1,10 +1,11 @@
 ;@ schema_version: "0.0.2"
-;@ sequence_version: "0.1.1"
+;@ sequence_version: "0.1.2"
 ;@ title: 19F R1
 ;@ description: |
 ;@   1D 19F R1 measurement
 ;@
 ;@   - with optional 1H decoupling (use -DHDEC flag)
+;@   - tested with Topspin 3.7.0
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2024-05-21
@@ -89,6 +90,8 @@ exit
 ph1 = 0 1 2 3
 ph2 = 0 0 0 0 1 1 1 1 2 2 2 2 3 3 3 3
 ph31= 0 0 0 0 1 1 1 1 2 2 2 2 3 3 3 3
+ph11=0
+ph12=1
 
 ;pl1: f1 channel - power level for pulse (default)
 ;pl11: f1 channel - 5 kHz purge pulse
