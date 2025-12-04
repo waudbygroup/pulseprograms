@@ -1,5 +1,5 @@
 ;@ schema_version: "0.0.2"
-;@ sequence_version: "0.1.3"
+;@ sequence_version: "0.1.4"
 ;@ title: 19F CEST
 ;@ description: |
 ;@   1D 19F CEST measurement
@@ -7,6 +7,7 @@
 ;@   - set nominal saturation power cnst25 (in Hz)
 ;@   - saturation applied for duration d18 during recycle delay
 ;@   - additional relaxation delay of d1 applied without saturation
+;@   - use '-DHDEC' for 1H decoupling during acquisition
 ;@   - tested with Topspin 3.7.0
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
@@ -36,11 +37,23 @@ define list<frequency> F19sat = <$FQ1LIST>
 "p25=1000000/(4*cnst25)" ; SL 90 pulse length
 "plw25=plw1*pow(p1/p25,2)" ; SL power
 
+#ifdef HDEC
+"pcpd2=62.5u"          ; pulse length for 4kHz decoupling
+"plw12=plw2*pow(p3/pcpd2,2)"
+#endif /* HDEC */
+
 ; for baseopt
 "acqt0=-p1*2/3.1416"
 
 1 ze 
-2 d1 
+#ifdef HDEC
+  d11 pl12:f2
+2 d11 do:f2
+#else
+2 d11
+#endif /* HDEC */
+
+  d1
 
   ; CEST period
   4u pl25:f1 
@@ -64,9 +77,15 @@ define list<frequency> F19sat = <$FQ1LIST>
  p1 ph3
 ;------------------------------------
 
-  go=2 ph31 
-  d1 mc #0 to 2 
+#ifdef HDEC
+  go=2 ph31 cpd2:f2
+  d11 do:f2 mc #0 to 2 
      F1QF(calclist(F19sat, 1))
+#else
+  go=2 ph31 
+  d11 mc #0 to 2 
+     F1QF(calclist(F19sat, 1))
+#endif /* HDEC */
 
 exit 
   
@@ -78,7 +97,7 @@ ph11=0
 ph31=0 2 2 0 1 3 3 1
 
 
-;p16: homospoil/gradient pulse                       [0.5 msec]
+;p16: homospoil/gradient pulse                       [1 msec]
 ;d1 : relaxation delay (excluding saturation time)
 ;d11: delay for disk I/O                             [30 msec]
 ;d12: delay for power switching                      [20 usec]
