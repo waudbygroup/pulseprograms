@@ -28,6 +28,7 @@
 ;@ acquisition_order: [f1, r1rho.duration, r1rho.power]
 ;@ reference_pulse:
 ;@ - {channel: f1, duration: p1, power: pl1}
+;@ - {channel: f2, duration: p3, power: pl2}
 ;@ r1rho: {channel: f1, power: powerlist, duration: taulist, offset: 0, alignment: hard_pulse}
 
 

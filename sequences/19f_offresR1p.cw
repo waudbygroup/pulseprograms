@@ -19,11 +19,12 @@
 ;@ status: beta
 ;@ experiment_type: [r1rho, 1d]
 ;@ features: [relaxation_dispersion, off_resonance, temperature_compensation]
-;@ typical_nuclei: [19F]
+;@ typical_nuclei: [19F, 1H]
 ;@ dimensions: [r1rho.duration, r1rho.offset, f1]
 ;@ acquisition_order: [f1, r1rho.duration, r1rho.offset]
 ;@ reference_pulse:
 ;@ - {channel: f1, duration: p1, power: pl1}
+;@ - {channel: f2, duration: p3, power: pl2}
 ;@ r1rho: {channel: f1, power: pl25, duration: taulist, offset: fqlist, alignment: hard_pulse}
 
 
