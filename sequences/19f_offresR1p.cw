@@ -1,13 +1,15 @@
 ;@ schema_version: "0.0.2"
-;@ sequence_version: "0.2.2"
+;@ sequence_version: "0.2.3"
 ;@ title: 19F off-resonance R1rho relaxation dispersion
 ;@ description: |
 ;@   Off-resonance 19F R1rho as pseudo-3D
 ;@
-;@   - set SL power in pl25
+;@   - set nominal SL power (Hz) in CNST25
 ;@   - set SL durations in VPLIST
 ;@   - set SL offsets in FQ1LIST (must be !sfo hz!)
 ;@   - 4x expected scans will be acquired to cover z/-z and theta/theta-bar
+;@   - BUG - do not use any dummy scans!
+;@   - tested with Topspin 3.7.0
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@   - Jan Overbeck
@@ -46,15 +48,15 @@ define list<frequency> fqlist = <$FQ1LIST>
 "l2=0"  ; vplist
 "l3=0"
 
+"p25=1000000/(4*cnst25)" ; SL 90 pulse length
+"plw25=plw1*pow(p1/p25,2)"
 "cnst28=fqlist"
-"p29=10*log10(plw25)"
-"p3 = p1*pow(10,(10*log10(plw1) - p29)/20)"       ;90 degree SL pulse
-"p6 = ((cnst28)/((1/(p3*4))))"            ; spin lock offset / spin lock power
+"p6 = ((cnst28)/((1/(p25*4))))"            ; spin lock offset / spin lock power
 "p7 = atan(p6)*180/PI"                    ; arc tan from this ratio = theta in deg
 "p4 = p1*(1-p7/90)"                                          ; theta pulse length
 "p5 = p1*(1+p7/90)"                                          ; 180-theta pulse length
 
-"p30 = taulist.max"  ; maximum SL length for T compentation
+"p30 = 1.01*taulist.max"  ; maximum SL length for T compentation
 
 aqseq 312
 
@@ -72,7 +74,7 @@ aqseq 312
 ; dependent tip angle theta
 ; -------------------------------*/
   "cnst28=fqlist"
-  "p6 = ((cnst28)/((1/(p3*4))))"            ; spin lock offset / spin lock power
+  "p6 = ((cnst28)/((1/(p25*4))))"            ; spin lock offset / spin lock power
   "p7 = atan(p6)*180/PI"                    ; arc tan from this ratio = theta in deg
   "p4 = p1*(1-p7/90)"                                          ; theta pulse length
   "p5 = p1*(1+p7/90)"                                          ; 180-theta pulse length
@@ -80,6 +82,9 @@ aqseq 312
 /* ---------------------------------
 ;     heating compensation
 ; --------------------------------*/
+
+   d1
+
   "p32=taulist[l2]"
   "p31=p30-p32"
   if "p31 > 0.0"
@@ -89,7 +94,6 @@ aqseq 312
     (p31 ph1):f1
     }
 
-   d1
 
 /* ---------------------------------
 ;  transfer to theta and SL
@@ -207,11 +211,12 @@ ph31=0 2 2 0
 ;p2 : f1 channel - 180 degree high power pulse
 ;d1 : relaxation delay; 1-5 * T1
 ;d11: delay for disk I/O    [30 msec]
-;ns: 4 * n (actual ns will be 4x this value)
-;ds: > 4
+;ns: 2 * n (actual ns will be 4x this value)
+;ds: 0
 
 ;p44: f1 channel - 180 degree shaped pulse
 ;sp30: f1 channel - shaped pulse 180 degree (Bip720,50,20.1)
+;cnst25: spin lock power in Hz
 ;pl25: spin lock power
 ;VPLIST: list of spin lock lengths
 ;FQ1LIST: list of spin lock offsets !sfo hz!
