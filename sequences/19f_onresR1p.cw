@@ -1,5 +1,5 @@
 ;@ schema_version: "0.0.2"
-;@ sequence_version: "0.1.2"
+;@ sequence_version: "0.1.3"
 ;@ title: 19F on-resonance R1rho relaxation dispersion
 ;@ description: |
 ;@   On-resonance 19F R1rho (pseudo-3D)
@@ -7,8 +7,9 @@
 ;@   - set SL durations in VPLIST
 ;@   - set SL power levels in VALIST !in dB!
 ;@   - set cnst28 to the desired on-resonance offset (in ppm)
-;@   - with temperature compensation (set pl30 = maximum SL power)
+;@   - with temperature compensation
 ;@   - use '-DHDEC' for 1H decoupling during acquisition
+;@   - tested with Topspin 3.7.0
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@   - Jan Overbeck
@@ -18,7 +19,7 @@
 ;@ doi:
 ;@   - 10.26434/chemrxiv-2025-vt1wg
 ;@ created: 2020-01-01
-;@ last_modified: 2025-12-03
+;@ last_modified: 2025-12-04
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [r1rho, 1d]
@@ -50,9 +51,6 @@
 define list<pulse> taulist = <$VPLIST>
 define list<power> powerlist = <$VALIST>
 
-; power (dB) for temperature compensation
-"cnst33=-10*log10(plw30)"
-"p30=taulist.max"
 
 "p2=p1*2"
 #ifdef HDEC
@@ -64,7 +62,17 @@ define list<power> powerlist = <$VALIST>
 
 "l2=0"
 "l3=0"
+
+; power (dB) for temperature compensation
+"p30=taulist.max * 1.01"
+"cnst35=powerlist.max"
+"plw30=pow(10,-0.1*cnst35)"
+"cnst34=plw30" ; maximum for T compensation
+
+"cnst33=pow(10,-0.1*powerlist[l3])" ; SL power in W
+
 aqseq 312
+
 
 1 ze
 #ifdef HDEC
@@ -78,7 +86,8 @@ aqseq 312
 ; -------------------------------*/
 "p32=taulist[l2]"
 "powerlist.idx = l3"
-"p31=p30-p32*pow(10,(pl30 - powerlist[l3])/10)"
+"cnst33=pow(10,-0.1*powerlist[l3])" ; SL power in W
+"p31=p30-p32*(cnst33/cnst34)"
 
 /* ---------------------------------
 ; relaxation delay (d1)
