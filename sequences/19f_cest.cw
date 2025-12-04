@@ -1,15 +1,17 @@
 ;@ schema_version: "0.0.2"
-;@ sequence_version: "0.1.2"
+;@ sequence_version: "0.1.3"
 ;@ title: 19F CEST
 ;@ description: |
 ;@   1D 19F CEST measurement
 ;@
-;@   - Saturation applied for duration d18 during recycle delay
-;@   - Additional relaxation delay of d1 applied without saturation
+;@   - set nominal saturation power cnst25 (in Hz)
+;@   - saturation applied for duration d18 during recycle delay
+;@   - additional relaxation delay of d1 applied without saturation
+;@   - tested with Topspin 3.7.0
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2025-08-01
-;@ last_modified: 2025-11-15
+;@ last_modified: 2025-12-04
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [cest, 1d]
@@ -19,7 +21,7 @@
 ;@ acquisition_order: [f1, cest.offset]
 ;@ reference_pulse:
 ;@ - {channel: f1, duration: p1, power: pl1}
-;@ cest: {channel: f1, power: pl8, duration: d18, offset: F19sat}
+;@ cest: {channel: f1, power: pl25, duration: d18, offset: F19sat}
 
 #include <Avance.incl>
 #include <Grad.incl>
@@ -31,6 +33,9 @@ define list<frequency> F19sat = <$FQ1LIST>
 "d11=30m"
 "d12=20u"
 
+"p25=1000000/(4*cnst25)" ; SL 90 pulse length
+"plw25=plw1*pow(p1/p25,2)" ; SL power
+
 ; for baseopt
 "acqt0=-p1*2/3.1416"
 
@@ -38,10 +43,10 @@ define list<frequency> F19sat = <$FQ1LIST>
 2 d1 
 
   ; CEST period
-  4u pl8:f1 
+  4u pl25:f1 
   4u F19sat:f1
   d18 cw:f1 ph11
-  1u do:f1 
+  4u do:f1 
 
   ; purge
   4u UNBLKGRAD
