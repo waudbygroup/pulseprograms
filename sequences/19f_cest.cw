@@ -1,5 +1,5 @@
 ;@ schema_version: "0.0.2"
-;@ sequence_version: "0.1.4"
+;@ sequence_version: "0.1.5"
 ;@ title: 19F CEST
 ;@ description: |
 ;@   1D 19F CEST measurement
@@ -12,7 +12,7 @@
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2025-08-01
-;@ last_modified: 2025-12-04
+;@ last_modified: 2026-03-06
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [cest, 1d]

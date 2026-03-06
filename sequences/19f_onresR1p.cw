@@ -1,5 +1,5 @@
 ;@ schema_version: "0.0.2"
-;@ sequence_version: "0.1.3"
+;@ sequence_version: "0.2.0"
 ;@ title: 19F on-resonance R1rho relaxation dispersion
 ;@ description: |
 ;@   On-resonance 19F R1rho (pseudo-3D)
@@ -18,7 +18,7 @@
 ;@ doi:
 ;@   - 10.26434/chemrxiv-2025-vt1wg
 ;@ created: 2020-01-01
-;@ last_modified: 2025-12-04
+;@ last_modified: 2026-03-06
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [r1rho, 1d]

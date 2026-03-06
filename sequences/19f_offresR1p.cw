@@ -1,5 +1,5 @@
 ;@ schema_version: "0.0.2"
-;@ sequence_version: "0.2.3"
+;@ sequence_version: "0.2.4"
 ;@ title: 19F off-resonance R1rho relaxation dispersion
 ;@ description: |
 ;@   Off-resonance 19F R1rho as pseudo-3D
@@ -16,7 +16,7 @@
 ;@ citation:
 ;@   - Overbeck (2020)
 ;@ created: 2020-01-01
-;@ last_modified: 2025-12-04
+;@ last_modified: 2026-03-06
 ;@ repository: github.com/waudbygroup/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [r1rho, 1d]
