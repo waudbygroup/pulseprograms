@@ -8,7 +8,7 @@
 ;@   - saturation applied for duration d18 during recycle delay
 ;@   - additional relaxation delay of d1 applied without saturation
 ;@   - use '-DHDEC' for 1H decoupling during acquisition
-;@   - tested with Topspin 3.7.0
+;@   - tested with Topspin 3.7.0 and 4.5.0
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2025-08-01

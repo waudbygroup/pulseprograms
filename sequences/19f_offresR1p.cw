@@ -9,7 +9,7 @@
 ;@   - set SL offsets in FQ1LIST **must be sfo hz**
 ;@   - 4x expected scans will be acquired to cover z/-z and theta/theta-bar
 ;@   - BUG - do not use any dummy scans!
-;@   - tested with Topspin 3.7.0
+;@   - tested with Topspin 3.7.0 and 4.5.0
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@   - Jan Overbeck
