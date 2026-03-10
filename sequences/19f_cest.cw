@@ -1,5 +1,5 @@
 ;@ schema_version: "0.0.2"
-;@ sequence_version: "0.1.5"
+;@ sequence_version: "0.1.6"
 ;@ title: 19F CEST
 ;@ description: |
 ;@   1D 19F CEST measurement
@@ -22,6 +22,7 @@
 ;@ acquisition_order: [f1, cest.offset]
 ;@ reference_pulse:
 ;@ - {channel: f1, duration: p1, power: pl1}
+;@ - {channel: f2, duration: p3, power: pl2}
 ;@ cest: {channel: f1, power: pl25, duration: d18, offset: F19sat}
 
 #include <Avance.incl>

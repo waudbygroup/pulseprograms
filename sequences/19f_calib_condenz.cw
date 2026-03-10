@@ -1,19 +1,25 @@
 ;@ schema_version: "0.0.2"
-;@ sequence_version: "0.1.0"
+;@ sequence_version: "0.1.1"
 ;@ title: CONDENZ 19F pulse calibration
 ;@ description: |
 ;@   CONDENZ 19F pulse calibration
 ;@
 ;@   - place calibration signal on-resonance
 ;@   - set cnst25 to nominal rf field in Hz (e.g. 60 for 60 Hz)
-;@   - use 42 points in indirect dimension
+;@   - use offsets from +/- 5 x cnst25 for calculation, plus 100x off-resonance for reference
+;@   - use '-DHDEC' for 1H decoupling during acquisition
 ;@   - ensure d1 is long enough for full relaxation between scans
+;@   - tested on Topspin 3.7.0
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
+;@ citation:
+;@   - Jaladeep et al. JMR (2021)
+;@ doi:
+;@   - 10.1016/j.jmr.2021.107032
 ;@ created: 2026-03-10
 ;@ last_modified: 2026-03-10
 ;@ repository: github.com/waudbygroup/pulseprograms
-;@ status: alpha
+;@ status: beta
 ;@ experiment_type: [calibration, 1d]
 ;@ features: [condenz]
 ;@ typical_nuclei: [19F]
@@ -21,12 +27,13 @@
 ;@ acquisition_order: [f1, calibration.offset]
 ;@ reference_pulse:
 ;@ - {channel: f1, duration: p1, power: pl1}
+;@ - {channel: f2, duration: p3, power: pl2}
 ;@ calibration:
 ;@   type: condenz
 ;@   channel: f1
 ;@   power: pl25
-;@   duration: p25
-;@   offset: {counter: F19sat, scale: cnst25}
+;@   duration: p26
+;@   offset: F19sat
 
 
 #include <Avance.incl>
@@ -40,10 +47,9 @@
 ; calculate power level and pulse length for desired rf field
 "p25=1s/(cnst25*4)"          ; pulse length for 90 degree pulse at desired rf field
 "plw25=plw1*pow(p1/p25,2)"
+"p26=20*p25" ; 5 cycles of nutation (5 x 4 x 90)
 
-;define list<frequency> F19sat = <$FQ1LIST>
-define list<frequency> F19sat = {100 -2 -1.9 -1.8 -1.7 -1.6 -1.5 -1.4 -1.3 -1.2 -1.1 -1.0 -0.9 -0.8 -0.7 -0.6 -0.5 -0.4 -0.3 -0.2 -0.1 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2}
-"cnst20=0"
+define list<frequency> F19sat = <$FQ1LIST>
 
 #ifdef HDEC
 "pcpd2=62.5u"          ; pulse length for 4kHz decoupling
@@ -60,12 +66,11 @@ define list<frequency> F19sat = {100 -2 -1.9 -1.8 -1.7 -1.6 -1.5 -1.4 -1.3 -1.2 
 #endif /* HDEC */
 
   d1
-"cnst20=F19sat * cnst25"
 
   ; CONDENZ pulse
   4u pl25:f1 
-  4u fq=cnst20:f1
-  p25:f1 ph11
+  4u F19sat:f1
+  p26:f1 ph11
 
   ; purge
   4u UNBLKGRAD
@@ -101,11 +106,12 @@ ph3 =0 0 2 2 1 1 3 3
 ph11=0 
 ph31=0 2 2 0 1 3 3 1
 
-;cnst25 : nominal rf field in Hz (e.g. 60 for 60 Hz)
+;cnst25 : nominal rf field in Hz (e.g. 1000 for 1000 Hz)
 ;pl1 : f1 channel - power level for pulse (default)
-;pl25 : f1 channel - power level for nutation calibration
+;pl25 : f1 channel - power level for nutation calibration (calculated)
 ;p1 : f1 channel -  high power pulse
-;p25 : f1 channel -  90 degree pulse length at desired rf field
+;p25 : f1 channel -  90 degree pulse length at desired rf field (calculated)
+;p26 : f1 channel -  pulse length for 5 cycles of nutation at desired rf field (calculated)
 ;d1 : relaxation delay; 3-5 * T1
 ;NS: 1 * n
 ;td1: 42
