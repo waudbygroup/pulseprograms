@@ -95,7 +95,10 @@ define list<frequency> F19sat = {100 -2 -1.9 -1.8 -1.7 -1.6 -1.5 -1.4 -1.3 -1.2 
 
 exit
 
-ph1=0 2 2 0 1 3 3 1
+ph1 =0
+ph2 =2 0
+ph3 =0 0 2 2 1 1 3 3
+ph11=0 
 ph31=0 2 2 0 1 3 3 1
 
 ;cnst25 : nominal rf field in Hz (e.g. 60 for 60 Hz)
