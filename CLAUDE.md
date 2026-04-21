@@ -116,7 +116,7 @@ Bruker pulse program files with embedded YAML metadata using `;@` comment syntax
 ;@   - P. Schanda
 ;@ created: 2024-01-15
 ;@ last_modified: 2025-08-15
-;@ repository: github.com/waudbygroup/pulseprograms
+;@ repository: github.com/waudbylab/pulseprograms
 ;@ description: 1H,15N SOFAST-HMQC for rapid or sensitive measurements
 ;@ citation:
 ;@   - Schanda & Brutscher, J. Am. Chem. Soc. (2005) 127, 8014

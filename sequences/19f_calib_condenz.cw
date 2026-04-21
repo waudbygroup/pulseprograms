@@ -18,7 +18,7 @@
 ;@   - 10.1016/j.jmr.2021.107032
 ;@ created: 2026-03-10
 ;@ last_modified: 2026-03-10
-;@ repository: github.com/waudbygroup/pulseprograms
+;@ repository: github.com/waudbylab/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [calibration, 1d]
 ;@ features: [condenz]

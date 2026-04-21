@@ -27,8 +27,8 @@ This repository provides a platform for the NMR community to share pulse sequenc
 ## Getting Help
 
 - 📖 Read the [Getting Started guide](getting-started/quickstart.md)
-- 💬 Join [GitHub Discussions](https://github.com/waudbygroup/pulseprograms/discussions)
-- 🐛 Report issues on [GitHub](https://github.com/waudbygroup/pulseprograms/issues)
+- 💬 Join [GitHub Discussions](https://github.com/waudbylab/pulseprograms/discussions)
+- 🐛 Report issues on [GitHub](https://github.com/waudbylab/pulseprograms/issues)
 - 📧 Contact maintainers directly
 
 ## Contributing

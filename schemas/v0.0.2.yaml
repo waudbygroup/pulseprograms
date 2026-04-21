@@ -2,7 +2,7 @@
 # This schema defines the structure and validation rules for pulse sequence metadata
 
 $schema: "http://json-schema.org/draft-07/schema#"
-$id: "https://github.com/waudbygroup/pulseprograms/schemas/v0.0.2.yaml"
+$id: "https://github.com/waudbylab/pulseprograms/schemas/v0.0.2.yaml"
 title: "NMR Pulse Sequence Metadata Schema"
 description: "Schema for validating YAML metadata embedded in NMR pulse program files"
 version: "0.0.2"

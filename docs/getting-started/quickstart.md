@@ -17,7 +17,7 @@ Get up and running with the NMR pulse sequence repository.
 ## For Contributors
 
 ### Quick Contribution
-1. Open a [GitHub issue](https://github.com/waudbygroup/pulseprograms/issues) 
+1. Open a [GitHub issue](https://github.com/waudbylab/pulseprograms/issues) 
 2. Upload your sequence file
 3. Provide basic information
 4. Maintainers handle integration

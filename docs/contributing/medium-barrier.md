@@ -14,7 +14,7 @@ Ideal for users comfortable with Git but who want guidance on metadata formattin
 
 ### Step-by-Step Process
 
-1. **Fork Repository**: Click "Fork" on the [main repository](https://github.com/waudbygroup/pulseprograms)
+1. **Fork Repository**: Click "Fork" on the [main repository](https://github.com/waudbylab/pulseprograms)
 
 2. **Clone Your Fork**:
    ```bash
@@ -34,7 +34,7 @@ Ideal for users comfortable with Git but who want guidance on metadata formattin
    ;@ authors: [Your Name <email@institution.edu>]
    ;@ created: 2024-01-15
    ;@ last_modified: 2024-01-15
-   ;@ repository: github.com/waudbygroup/pulseprograms
+   ;@ repository: github.com/waudbylab/pulseprograms
    ;@ status: experimental
    
    ; Your pulse program code...

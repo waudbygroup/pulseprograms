@@ -17,7 +17,7 @@
 ;@   - Overbeck (2020)
 ;@ created: 2020-01-01
 ;@ last_modified: 2026-03-06
-;@ repository: github.com/waudbygroup/pulseprograms
+;@ repository: github.com/waudbylab/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [r1rho, 1d]
 ;@ features: [relaxation_dispersion, off_resonance, temperature_compensation]

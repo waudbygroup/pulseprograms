@@ -2,7 +2,7 @@
 # This schema defines the structure and validation rules for pulse sequence metadata
 
 $schema: "http://json-schema.org/draft-07/schema#"
-$id: "https://github.com/waudbygroup/pulseprograms/schemas/v0.0.1.yaml"
+$id: "https://github.com/waudbylab/pulseprograms/schemas/v0.0.1.yaml"
 title: "NMR Pulse Sequence Metadata Schema"
 description: "Schema for validating YAML metadata embedded in NMR pulse program files"
 version: "0.0.1"
@@ -125,7 +125,7 @@ examples:
       - P. Schanda
     created: 2024-01-15
     last_modified: 2025-08-15
-    repository: github.com/waudbygroup/pulseprograms
+    repository: github.com/waudbylab/pulseprograms
     description: 1H,15N SOFAST-HMQC for rapid or sensitive measurements
     citation:
       - Schanda & Brutscher, J. Am. Chem. Soc. (2005) 127, 8014

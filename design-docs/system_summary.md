@@ -46,7 +46,7 @@ authors:                       # Required: contributor list
 - P. Schanda
 created: 2024-01-15          # Required: creation date
 last_modified: 2025-08-15    # Required: last modification date
-repository: github.com/waudbygroup/pulseprograms  # Required: repository
+repository: github.com/waudbylab/pulseprograms  # Required: repository
 description: 1H,15N SOFAST-HMQC for rapid or sensitive measurements   # Optional: detailed description
 citation:
 - Schanda & Brutscher, J. Am. Chem. Soc. (2005) 127, 8014

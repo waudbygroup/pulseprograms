@@ -13,7 +13,7 @@
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2025-08-01
 ;@ last_modified: 2026-03-06
-;@ repository: github.com/waudbygroup/pulseprograms
+;@ repository: github.com/waudbylab/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [cest, 1d]
 ;@ features: []

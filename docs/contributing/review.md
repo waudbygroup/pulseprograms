@@ -32,7 +32,7 @@ The validation system provides helpful guidance:
 ;@ authors: [Your Name <email@institution.edu>]
 ;@ created: "2024-08-17"
 ;@ last_modified: "2024-08-17"
-;@ repository: "github.com/waudbygroup/pulseprograms"
+;@ repository: "github.com/waudbylab/pulseprograms"
 ;@ status: experimental
 
 💡 Recommended Optional Fields:

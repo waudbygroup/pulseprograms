@@ -6,16 +6,16 @@ We welcome contributions from the entire NMR community! This repository is desig
 
 ### Easy: Use GitHub Issues
 
-Quick link: [Submit a new sequence or report a problem](https://github.com/waudbygroup/pulseprograms/issues)
+Quick link: [Submit a new sequence or report a problem](https://github.com/waudbylab/pulseprograms/issues)
 
 - Open a new issue and paste in or attach your pulse sequence
 - Provide basic information (name, type, author)
 - Maintainers will add essential metadata and integrate
 
 ### Advanced: Submit a Pull Request
-- Fork the [repository](https://github.com/waudbygroup/pulseprograms)
+- Fork the [repository](https://github.com/waudbylab/pulseprograms)
 - Add your sequence including at least essential metadata
-- Submit a [pull request](https://github.com/waudbygroup/pulseprograms/pulls) for review
+- Submit a [pull request](https://github.com/waudbylab/pulseprograms/pulls) for review
 
 ## Metadata Requirements
 
@@ -27,7 +27,7 @@ All sequences must include embedded YAML metadata using `;@` comment prefix:
 ;@ title: Your Sequence Name
 ;@ authors: [Your Name <email@institution.edu>]
 ;@ created: 2024-01-15
-;@ repository: github.com/waudbygroup/pulseprograms
+;@ repository: github.com/waudbylab/pulseprograms
 ;@ status: experimental
 
 ; Your pulse program code follows...
@@ -39,4 +39,4 @@ All sequences must include embedded YAML metadata using `;@` comment prefix:
 - Required metadata fields must be included
 - YAML syntax must be valid
 
-For complete guidelines, see the [CONTRIBUTING.md](https://github.com/waudbygroup/pulseprograms/blob/main/CONTRIBUTING.md) file in the repository.
+For complete guidelines, see the [CONTRIBUTING.md](https://github.com/waudbylab/pulseprograms/blob/main/CONTRIBUTING.md) file in the repository.

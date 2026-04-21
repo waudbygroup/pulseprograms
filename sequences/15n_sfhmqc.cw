@@ -14,7 +14,7 @@
 ;@   - 10.1021/ja051306e
 ;@ created: 2024-01-15
 ;@ last_modified: 2025-11-15
-;@ repository: github.com/waudbygroup/pulseprograms
+;@ repository: github.com/waudbylab/pulseprograms
 ;@ status: stable
 ;@ experiment_type: [hmqc, 2d]
 ;@ features: [sofast, states_tppi]

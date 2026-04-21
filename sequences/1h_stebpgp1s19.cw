@@ -11,7 +11,7 @@
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2020-09-04
 ;@ last_modified: 2025-11-15
-;@ repository: github.com/waudbygroup/pulseprograms
+;@ repository: github.com/waudbylab/pulseprograms
 ;@ status: experimental
 ;@ experiment_type: [diffusion, 1d]
 ;@ features: [ste, watergate]

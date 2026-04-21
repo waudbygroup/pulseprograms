@@ -18,7 +18,7 @@ This repository provides a platform for the NMR community to share pulse sequenc
 
 ### Using Sequences
 
-1. Browse the [sequences/](sequences/) directory or visit our [documentation site](https://waudbygroup.github.io/pulseprograms)
+1. Browse the [sequences/](sequences/) directory or visit our [documentation site](https://waudbylab.github.io/pulseprograms)
 2. Download the pulse program file you need
 3. Copy to your TopSpin experiment directory
 4. The embedded annotations (`;@` comments) are ignored by TopSpin but provide rich metadata
@@ -37,7 +37,7 @@ This repository provides a platform for the NMR community to share pulse sequenc
 ;@   - P. Schanda
 ;@ created: 2024-01-15
 ;@ last_modified: 2025-08-15
-;@ repository: github.com/waudbygroup/pulseprograms
+;@ repository: github.com/waudbylab/pulseprograms
 ;@ description: 1H,15N SOFAST-HMQC for rapid or sensitive measurements
 ;@ citation:
 ;@   - Schanda & Brutscher, J. Am. Chem. Soc. (2005) 127, 8014
@@ -110,7 +110,7 @@ We welcome contributions at all levels! See [CONTRIBUTING.md](CONTRIBUTING.md) f
 
 ## Documentation
 
-Full documentation is available at [https://waudbygroup.github.io/pulseprograms](https://waudbygroup.github.io/pulseprograms) including:
+Full documentation is available at [https://waudbylab.github.io/pulseprograms](https://waudbylab.github.io/pulseprograms) including:
 
 - Searchable sequence database
 - Individual sequence pages with metadata and changelogs

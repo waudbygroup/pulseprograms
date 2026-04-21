@@ -22,7 +22,7 @@ class PRValidator:
     def get_repo_info(self) -> Dict[str, str]:
         """Extract repository information from Git and GitHub."""
         info = {
-            'url': 'github.com/waudbygroup/pulseprograms',
+            'url': 'github.com/waudbylab/pulseprograms',
             'name': 'pulseprograms',
             'author_name': 'Your Name',
             'author_email': 'email@institution.edu'

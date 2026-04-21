@@ -9,7 +9,7 @@
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2024-05-21
 ;@ last_modified: 2025-11-15
-;@ repository: github.com/waudbygroup/pulseprograms
+;@ repository: github.com/waudbylab/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [relaxation, 1d]
 ;@ features: [R2, hahn_echo, broadband]

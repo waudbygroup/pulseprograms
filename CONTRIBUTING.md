@@ -41,7 +41,7 @@ Thanks!
 **Best for:** Structured metadata entry, journal-style submission
 
 **Process:**
-1. Visit our [sequence submission form](https://waudbygroup.github.io/pulseprograms/submit) *(Coming soon)*
+1. Visit our [sequence submission form](https://waudbylab.github.io/pulseprograms/submit) *(Coming soon)*
 2. Upload your pulse program file
 3. Fill out guided metadata form with:
    - Required fields (title, experiment type, authors, dates)
@@ -87,7 +87,7 @@ Embed YAML metadata in your pulse program using `;@` comment prefix:
 ;@   - Your Name <your.email@institution.edu>
 ;@ created: 2024-01-15
 ;@ last_modified: 2025-08-15
-;@ repository: github.com/waudbygroup/pulseprograms
+;@ repository: github.com/waudbylab/pulseprograms
 
 ; Your pulse program code follows...
 "p1=4u"

@@ -8,7 +8,7 @@ Perfect for users who want to share sequences without dealing with technical det
 
 ### How it Works
 
-1. **Open an Issue**: Go to [GitHub Issues](https://github.com/waudbygroup/pulseprograms/issues)
+1. **Open an Issue**: Go to [GitHub Issues](https://github.com/waudbylab/pulseprograms/issues)
 2. **Choose Template**: Select "New Pulse Sequence Submission"
 3. **Fill out Form**: Provide basic information about your sequence
 4. **Submit**: Maintainers handle the rest!

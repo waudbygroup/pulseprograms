@@ -27,7 +27,7 @@ For users who want maximum control and searchability for their sequences.
 ;@   - P. Schanda
 ;@ created: 2024-01-15
 ;@ last_modified: 2024-08-17
-;@ repository: github.com/waudbygroup/pulseprograms
+;@ repository: github.com/waudbylab/pulseprograms
 ;@ description: >
 ;@   1H,15N SOFAST-HMQC with TROSY selection for rapid or sensitive
 ;@   measurements of large proteins. Includes selective excitation
