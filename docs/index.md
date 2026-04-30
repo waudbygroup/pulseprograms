@@ -1,40 +1,8 @@
-# NMR Pulse Sequence Repository
+# Pulse Sequences
 
-Welcome to the Waudby group repository for Nuclear Magnetic Resonance (NMR) pulse sequences!
+Bruker pulse programs from the [Waudby group](https://waudbylab.org) at UCL, used in our work on protein NMR, fluorine NMR, and dynamics. Each sequence is a standard TopSpin pulse program with embedded YAML metadata (`;@` comments) describing experiment type, parameters, references, and version history.
 
-## What is this repository?
-
-This repository provides a platform for the NMR community to share pulse sequences with rich metadata, enabling better discoverability, reproducibility, and collaboration. All sequences are TopSpin-compatible and include embedded YAML annotations for enhanced documentation.
-
-## Key Features
-
-- **Searchable database** of NMR pulse sequences
-- **Rich metadata** embedded directly in sequence files
-- **Version control** with Git-based changelog generation
-- **Automatic documentation** generation with individual sequence pages
-
-## Quick Start
-
-1. **Browse sequences**: Check out our [sequence database](sequences/index.md)
-2. **Download and use**: Copy pulse program files directly to TopSpin
-3. **Contribute**: Share your sequences via [multiple pathways](contributing/index.md)
-4. **Get involved**: Join discussions and help improve the repository
-
-## Latest Sequences
-
-*This section will be automatically populated with recently added sequences*
-
-## Getting Help
-
-- 📖 Read the [Getting Started guide](getting-started/quickstart.md)
-- 💬 Join [GitHub Discussions](https://github.com/waudbylab/pulseprograms/discussions)
-- 🐛 Report issues on [GitHub](https://github.com/waudbylab/pulseprograms/issues)
-- 📧 Contact maintainers directly
-
-## Contributing
-
-We welcome contributions from everyone! Whether you're sharing a sequence, improving documentation, or helping with code, see the [contributing guide](contributing/index.md) to get started.
-
----
-
-*This repository is maintained by the NMR community and hosted on GitHub. All sequences remain compatible with existing TopSpin workflows while providing enhanced metadata for improved collaboration.*
+- [Sequence database](sequences/index.md) — browse and search
+- [Annotation schema](schema/fields.md) — field reference
+- [Contributing](contributing/index.md) — submit a sequence
+- Source on [GitHub](https://github.com/waudbylab/pulseprograms)
