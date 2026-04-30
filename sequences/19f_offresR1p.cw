@@ -1,12 +1,12 @@
-;@ schema_version: "0.0.2"
-;@ sequence_version: "0.2.4"
+;@ schema_version: "0.0.3"
+;@ sequence_version: "0.2.5"
 ;@ title: 19F off-resonance R1rho relaxation dispersion
 ;@ description: |
 ;@   Off-resonance 19F R1rho as pseudo-3D
 ;@
 ;@   - set nominal SL power (Hz) in cnst25
 ;@   - set SL durations in VPLIST
-;@   - set SL offsets in FQ1LIST **must be sfo hz**
+;@   - set SL offsets in FQ1LIST !!! must be sfo hz !!!
 ;@   - 4x expected scans will be acquired to cover z/-z and theta/theta-bar
 ;@   - BUG - do not use any dummy scans!
 ;@   - tested with Topspin 3.7.0 and 4.5.0
@@ -16,7 +16,7 @@
 ;@ citation:
 ;@   - Overbeck (2020)
 ;@ created: 2020-01-01
-;@ last_modified: 2026-03-06
+;@ last_modified: 2026-04-30
 ;@ repository: github.com/waudbylab/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [r1rho, 1d]
@@ -27,7 +27,7 @@
 ;@ reference_pulse:
 ;@ - {channel: f1, duration: p1, power: pl1}
 ;@ - {channel: f2, duration: p3, power: pl2}
-;@ r1rho: {channel: f1, power: pl25, duration: taulist, offset: fqlist, alignment: hard_pulse}
+;@ r1rho: {channel: f1, power: pl25, duration: taulist, offset: fqlist}
 
 
 #include <Avance.incl>

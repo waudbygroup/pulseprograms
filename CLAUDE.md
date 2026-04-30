@@ -22,7 +22,9 @@ This is an NMR (Nuclear Magnetic Resonance) pulse sequence repository system des
 │   └── 19f_r1rho_onres
 ├── schemas/               # Schema definitions
 │   ├── v0.0.1.yaml
-│   └── current -> v0.0.1.yaml
+│   ├── v0.0.2.yaml
+│   ├── v0.0.3.yaml
+│   └── current -> v0.0.3.yaml
 ├── docs/                  # Generated MkDocs documentation
 ├── .github/workflows/     # GitHub Actions for validation and deployment
 ├── CONTRIBUTING.md        # Instructions on how to contribute
@@ -31,27 +33,31 @@ This is an NMR (Nuclear Magnetic Resonance) pulse sequence repository system des
 
 ### Annotation System
 - Uses `;@` prefix for YAML metadata blocks within Bruker pulse program files
-- Schema follows semantic versioning (currently v0.0.1)
+- Schema follows semantic versioning (currently v0.0.3)
 - Individual sequence versioning independent of repository versioning
 - Controlled vocabularies for experiment types, nuclei, and status fields
 
-### Key Metadata Fields (v0.0.1 Schema)
+### Key Metadata Fields (v0.0.3 Schema)
 Required fields (with automatic defaults):
-- `schema_version`: "0.0.1" (semantic versioning)
+- `schema_version`: "0.0.3" (semantic versioning)
 - `sequence_version`: Sequence version (semantic) - defaults to "0.1.0"
 - `title`: Short human-readable title - defaults to pulse program filename
 - `authors`: List with name and email - defaults to GitHub user making the commit
 - `created`, `last_modified`: Dates - automatically populated from Git history/commit dates
 - `repository`: Repository URL - automatically detected from Git remote
 - `status`: Development status - defaults to "experimental"
+- `experiment_type`: Array of experiment type keywords (controlled vocabulary)
 
 Optional fields:
 - `features`: Array of feature keywords
-- `nuclei_hint`: Array of nuclei involved
+- `typical_nuclei`: Array of nuclei, ordered by spectrometer channel (f1, f2, ...)
 - `description`: Detailed description
 - `citation`: Literature references
 - `doi`: Related publication DOIs
-- `status`: experimental/beta/stable/deprecated
+- `dimensions`: Indirect-dimension identifiers using dotted-path notation (e.g. `relaxation.duration`, `f1`)
+- `acquisition_order`: Acquisition loop order from innermost to outermost
+- `reference_pulse`: List of reference pulse calibrations `{channel, duration, power}`
+- Experiment-specific blocks: `calibration`, `relaxation`, `r1rho`, `cest`, `diffusion`. Each extends a common shape (`channel`, `power`, `duration`, `offset`, `type`, `model`) where any of `power`/`duration`/`offset` may be a parameter name, a number, a `linear` sweep `{start, end|step, scale}`, or a `{counter, scale}` expression.
 
 ### Technology Stack (Planned)
 - **Documentation**: MkDocs with Material theme
@@ -105,17 +111,17 @@ Repository is in initial setup phase with only design documentation. No build sy
 Bruker pulse program files with embedded YAML metadata using `;@` comment syntax. Example:
 
 ```
-;@ schema_version: "0.0.1"
-;@ sequence_version: "1.0.0"
+;@ schema_version: "0.0.3"
+;@ sequence_version: "1.1.0"
 ;@ title: SOFAST-HMQC
 ;@ experiment_type: [hmqc, 2d]
-;@ features: [sofast, sensitivity_enhancement, selective_excitation]
+;@ features: [sofast, states_tppi]
 ;@ typical_nuclei: [1H, 13C, 15N]
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@   - P. Schanda
 ;@ created: 2024-01-15
-;@ last_modified: 2025-08-15
+;@ last_modified: 2026-04-30
 ;@ repository: github.com/waudbylab/pulseprograms
 ;@ description: 1H,15N SOFAST-HMQC for rapid or sensitive measurements
 ;@ citation:
@@ -123,15 +129,22 @@ Bruker pulse program files with embedded YAML metadata using `;@` comment syntax
 ;@ doi:
 ;@   - 10.1021/ja051306e
 ;@ status: stable
+;@ dimensions: [f3, f1]
+;@ acquisition_order: [f1, f3]
+;@ reference_pulse:
+;@ - {channel: f1, duration: p1, power: pl1}
+;@ - {channel: f2, duration: p3, power: pl2}
+;@ - {channel: f3, duration: p21, power: pl3}
 ```
 
 ### Schema Files
-YAML schema definitions stored in `schemas/` directory with semantic versioning. Current schema is v0.0.1.
+YAML schema definitions stored in `schemas/` directory with semantic versioning. Current schema is v0.0.3 (`schemas/current` symlinks to it).
 
 ### Controlled Vocabularies
-- **experiment_type**: `1d`, `2d`, `3d`, `cosy`, `tocsy`, `noesy`, `hsqc`, `hmqc`, `trosy`, `relaxation`, `diffusion`, `solid_state` (extensible list)
-- **nuclei**: Standard isotope notation (`1H`, `13C`, `15N`, `31P`, `19F`, etc.)
+- **experiment_type** (enum in v0.0.3): `1d`, `2d`, `3d`, `cosy`, `tocsy`, `noesy`, `hsqc`, `hmqc`, `trosy`, `relaxation`, `r1rho`, `cest`, `diffusion`, `calibration`, `solid_state`
+- **nuclei**: Standard isotope notation (`1H`, `13C`, `15N`, `31P`, `19F`, etc.) or `nothing` placeholder for unused channels
 - **status**: `experimental`, `beta`, `stable`, `deprecated`
+- **features**: Open vocabulary — see VOCABULARY.md
 
 ## Schema Evolution Strategy
 - Keep required fields minimal and stable

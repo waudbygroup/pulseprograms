@@ -1,5 +1,5 @@
-;@ schema_version: "0.0.2"
-;@ sequence_version: "0.1.3"
+;@ schema_version: "0.0.3"
+;@ sequence_version: "0.1.4"
 ;@ title: 19F R2 (Perfect echo)
 ;@ description: |
 ;@   1D 19F broadband R2 perfect echo measurement
@@ -8,7 +8,7 @@
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2024-10-08
-;@ last_modified: 2025-11-15
+;@ last_modified: 2026-04-30
 ;@ repository: github.com/waudbylab/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [relaxation, 1d]

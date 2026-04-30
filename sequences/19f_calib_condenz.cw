@@ -1,5 +1,5 @@
-;@ schema_version: "0.0.2"
-;@ sequence_version: "0.1.1"
+;@ schema_version: "0.0.3"
+;@ sequence_version: "0.1.2"
 ;@ title: CONDENZ 19F pulse calibration
 ;@ description: |
 ;@   CONDENZ 19F pulse calibration
@@ -17,7 +17,7 @@
 ;@ doi:
 ;@   - 10.1016/j.jmr.2021.107032
 ;@ created: 2026-03-10
-;@ last_modified: 2026-03-10
+;@ last_modified: 2026-04-30
 ;@ repository: github.com/waudbylab/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [calibration, 1d]

@@ -2,10 +2,12 @@
 
 Controlled vocabulary for `experiment_type` and `features` fields.
 
-## Experiment Types
+`experiment_type` values are enforced by the schema enum (v0.0.3). `features` is open — use existing terms where possible and propose new ones via PR if widely applicable.
+
+## Experiment Types (enum)
 
 ### Dimensionality
-- `1d`, `2d`, `3d`, `4d` - Number of frequency dimensions in processed spectrum (not total dataset dimensions)
+- `1d`, `2d`, `3d` - Number of frequency dimensions in processed spectrum (not total dataset dimensions)
 
 ### Homonuclear
 - `cosy`, `tocsy`, `noesy` - Standard 2D homonuclear experiments
@@ -15,17 +17,13 @@ Controlled vocabulary for `experiment_type` and `features` fields.
 - `hmqc` - Heteronuclear multiple quantum coherence
 - `trosy` - Transverse relaxation optimized spectroscopy
 
-### Triple Resonance
-- `hnco`, `hncaco`, `hnca`, `hncoca`, `hncacb`, `hncocacb` - Standard backbone experiments
-
 ### Core Experiments
 - `relaxation` - R1, R2, NOE measurements
 - `r1rho` - R1ρ relaxation dispersion
-- `relaxation_dispersion` - (implicitly CPMG-based) relaxation dispersion
 - `cest` - Chemical exchange saturation transfer
-- `std` - Saturation transfer difference
-- `waterlogsy` - Water-ligand observed via gradient spectroscopy
 - `diffusion` - Diffusion/DOSY
+- `calibration` - Pulse / power calibration experiments
+- `solid_state` - Solid-state NMR experiments
 
 
 
@@ -33,7 +31,7 @@ Controlled vocabulary for `experiment_type` and `features` fields.
 ## Features
 
 ### Relaxation
-- `R1`, `R2`, `hetnoe`, `cpmg`, `hahn_echo`, `perfect_echo`, `inversion_recovery`
+- `R1`, `R2`, `hetnoe`, `cpmg`, `hahn_echo`, `perfect_echo`, `inversion_recovery`, `relaxation_dispersion`, `temperature_compensation`, `broadband`
 
 ### Spinlock
 - `on_resonance`, `off_resonance`
@@ -46,6 +44,12 @@ Controlled vocabulary for `experiment_type` and `features` fields.
 
 ### Excitation
 - `selective_excitation`, `sofast`, `alsofast`
+
+### Calibration
+- `nutation`, `condenz`
+
+### Detection / processing
+- `states_tppi`
 
 ### Water Suppression
 - `presaturation`, `water_suppression`, `watergate`

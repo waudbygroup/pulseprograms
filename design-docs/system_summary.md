@@ -35,33 +35,37 @@ Use `;@` as a special comment prefix for YAML metadata blocks within Bruker puls
 
 ### Core Metadata Fields
 ```yaml
-schema_version: "0.0.1"        # Required: annotation schema version (semantic)
-sequence_version: "1.0.0"      # Required: sequence version (semantic)
+schema_version: "0.0.3"        # Required: annotation schema version (semantic)
+sequence_version: "1.1.0"      # Required: sequence version (semantic)
 title: SOFAST-HMQC             # Required: short human-readable title
-experiment_type: [hmqc, 2d]    # Required: list of keywords
-features: [sofast, sensitivity_enhancement, selective_excitation]. # Optional
-nuclei_hint: [1H, 13C, 15N]    # Optional: array of nuclei
+experiment_type: [hmqc, 2d]    # Required: list of keywords (controlled enum)
+status: stable                 # Required: experimental/beta/stable/deprecated
+features: [sofast, states_tppi]   # Optional
+typical_nuclei: [1H, 13C, 15N] # Optional: array of nuclei, ordered by channel f1, f2, ...
 authors:                       # Required: contributor list
 - Chris Waudby <c.waudby@ucl.ac.uk>
 - P. Schanda
 created: 2024-01-15          # Required: creation date
-last_modified: 2025-08-15    # Required: last modification date
+last_modified: 2026-04-30    # Required: last modification date
 repository: github.com/waudbylab/pulseprograms  # Required: repository
-description: 1H,15N SOFAST-HMQC for rapid or sensitive measurements   # Optional: detailed description
+description: 1H,15N SOFAST-HMQC for rapid or sensitive measurements   # Optional
 citation:
 - Schanda & Brutscher, J. Am. Chem. Soc. (2005) 127, 8014
-doi:          # Optional: related publication(s)
+doi:
 - 10.1021/ja051306e
-status: stable                 # Optional: experimental/beta/stable/deprecated
+dimensions: [f3, f1]               # Optional: dotted-path identifiers
+acquisition_order: [f1, f3]        # Optional: innermost to outermost
+reference_pulse:                   # Optional: reference pulses for power calc
+- {channel: f1, duration: p1, power: pl1}
+- {channel: f2, duration: p3, power: pl2}
+- {channel: f3, duration: p21, power: pl3}
 
-# Future organic extensions (not yet formalised):
-observe_channel: f1
-dimensions: [f3, f1]
-acquisition_order: [2, 1]
-decoupling: [nothing, f3]
-hard_pulse:
-- [f1, p1, pl1]
-- [f3, p21, pl3]
+# Experiment-specific blocks (optional, formalised in v0.0.3):
+# calibration / relaxation / r1rho / cest / diffusion
+# Common shape: {channel, power, duration, offset, type, model}
+# where power/duration/offset can be a parameter name, a number,
+# a {type: linear, start, end|step, scale} sweep, or a {counter, scale} expression.
+relaxation: {type: R1, model: inversion_recovery, channel: f1, duration: t1delay}
 ```
 
 ### Schema Evolution Strategy
@@ -74,8 +78,8 @@ hard_pulse:
 
 ### Vocabularies (Initial)
 
-**experiment_type**: `1d`, `2d`, `3d`, `cosy`, `tocsy`, `noesy`, `hsqc`, `hmqc`, `trosy`, `relaxation`, `diffusion`, `solid_state`
-- This should not be regarded as a complete list but a starting point
+**experiment_type** (enum in v0.0.3): `1d`, `2d`, `3d`, `cosy`, `tocsy`, `noesy`, `hsqc`, `hmqc`, `trosy`, `relaxation`, `r1rho`, `cest`, `diffusion`, `calibration`, `solid_state`
+- The set is closed (validated as enum), but extensible across schema minor versions as new experiment categories arise.
 
 **nuclei**: Standard isotope notation (`1H`, `13C`, `15N`, `31P`, `19F`, etc.)
 
@@ -89,7 +93,9 @@ hard_pulse:
 │   └── 19f_r1rho_onres
 ├── schemas/               # Schema definitions
 │   ├── v0.0.1.yaml
-│   └── current -> v0.0.1.yaml
+│   ├── v0.0.2.yaml
+│   ├── v0.0.3.yaml
+│   └── current -> v0.0.3.yaml
 ├── docs/                  # Generated documentation
 ├── .github/workflows/     # GitHub Actions
 ├── CONTRIBUTING.md        # Instructions on how to contribute

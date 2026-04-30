@@ -33,11 +33,7 @@ This repository provides a platform for the NMR community to share pulse sequenc
 
 ## Contributing
 
-We welcome contributions from everyone! Whether you're sharing a sequence, improving documentation, or helping with code, there's a place for you:
-
-- **[Low barrier](contributing/low-barrier.md)**: Submit via GitHub issues or email
-- **[Medium barrier](contributing/medium-barrier.md)**: Use guided web forms
-- **[High barrier](contributing/high-barrier.md)**: Full YAML annotation control
+We welcome contributions from everyone! Whether you're sharing a sequence, improving documentation, or helping with code, see the [contributing guide](contributing/index.md) to get started.
 
 ---
 

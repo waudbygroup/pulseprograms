@@ -77,12 +77,6 @@ nav:
   # - Sequences: sequences/index.md
   - Sequence Database: database/
   - Contributing: contributing/index.md
-  # - Contributing:
-    # - Overview: contributing/index.md
-    # - Low Barrier: contributing/low-barrier.md
-    # - Medium Barrier: contributing/medium-barrier.md
-    # - High Barrier: contributing/high-barrier.md
-    # - Review Process: contributing/review.md
   - Annotation Schema:
     - Field Reference: schema/fields.md
     - Current Schema: schema/current.md

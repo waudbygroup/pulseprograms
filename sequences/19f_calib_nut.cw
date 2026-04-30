@@ -1,21 +1,21 @@
-;@ schema_version: "0.0.2"
-;@ sequence_version: "0.2.0"
+;@ schema_version: "0.0.3"
+;@ sequence_version: "1.0.0"
 ;@ title: Pulse nutation calibration
 ;@ description: |
-;@   19F Pulse mutation calibration
+;@   19F Pulse nutation calibration
 ;@
 ;@   - place calibration signal on-resonance
 ;@   - set cnst8 to nominal rf field in Hz (e.g. 60 for 60 Hz)
 ;@   - pulse length will be incremented in 45 degree steps
 ;@   - use 16 points in indirect dimension for nominal 720 degree nutation
 ;@   - ensure d1 is long enough for full relaxation between scans
-;@   - tested with Topspin 3.7.0
+;@   - tested with Topspin 3.7 and 4.5
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2020-09-04
-;@ last_modified: 2025-11-15
+;@ last_modified: 2026-04-30
 ;@ repository: github.com/waudbylab/pulseprograms
-;@ status: beta
+;@ status: stable
 ;@ experiment_type: [calibration, 1d]
 ;@ features: [nutation]
 ;@ typical_nuclei: [19F]

@@ -22,13 +22,15 @@ Quick link: [Submit a new sequence or report a problem](https://github.com/waudb
 All sequences must include embedded YAML metadata using `;@` comment prefix:
 
 ```bruker
-;@ schema_version: "0.0.1"
+;@ schema_version: "0.0.3"
 ;@ sequence_version: "1.0.0"
 ;@ title: Your Sequence Name
 ;@ authors: [Your Name <email@institution.edu>]
 ;@ created: 2024-01-15
+;@ last_modified: 2026-04-30
 ;@ repository: github.com/waudbylab/pulseprograms
 ;@ status: experimental
+;@ experiment_type: [1d]
 
 ; Your pulse program code follows...
 ```

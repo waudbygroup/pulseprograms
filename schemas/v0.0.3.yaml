@@ -1,0 +1,273 @@
+# NMR Pulse Sequence Annotation Schema v0.0.3
+# This schema defines the structure and validation rules for pulse sequence metadata
+
+$schema: "http://json-schema.org/draft-07/schema#"
+$id: "https://github.com/waudbylab/pulseprograms/schemas/v0.0.3.yaml"
+title: "NMR Pulse Sequence Metadata Schema"
+description: "Schema for validating YAML metadata embedded in NMR pulse program files"
+version: "0.0.3"
+
+$defs:
+  parameter_name:
+    type: string
+    minLength: 1
+    description: "A Bruker parameter name (e.g. p1, d20, cnst25, pl25, taulist, vplist, F19sat)"
+
+  linear_sweep:
+    type: object
+    description: |
+      A linearly swept quantity. The dimension size is set elsewhere (TD), so any two
+      of {start, end, step} are sufficient. 'scale' is a multiplicative factor applied
+      to the swept values (e.g. a gradient amplitude parameter). 'type' defaults to
+      'linear' if omitted.
+    properties:
+      type:
+        type: string
+        enum: [linear]
+        default: linear
+      start:
+        oneOf:
+          - $ref: "#/$defs/parameter_name"
+          - type: number
+      end:
+        oneOf:
+          - $ref: "#/$defs/parameter_name"
+          - type: number
+      step:
+        oneOf:
+          - $ref: "#/$defs/parameter_name"
+          - type: number
+      scale:
+        oneOf:
+          - $ref: "#/$defs/parameter_name"
+          - type: number
+        description: "Multiplicative factor applied to the swept values"
+    required: [start]
+    additionalProperties: false
+
+  counter_scale:
+    type: object
+    description: "A quantity defined as counter * scale (e.g. CPMG cycles ncyc * echo spacing d20)"
+    properties:
+      counter:
+        $ref: "#/$defs/parameter_name"
+      scale:
+        oneOf:
+          - $ref: "#/$defs/parameter_name"
+          - type: number
+    required: [counter, scale]
+    additionalProperties: false
+
+  parameter_value:
+    description: "A scalar parameter, a linear sweep, or a counter*scale expression"
+    oneOf:
+      - $ref: "#/$defs/parameter_name"
+      - type: number
+      - $ref: "#/$defs/linear_sweep"
+      - $ref: "#/$defs/counter_scale"
+
+  block_base:
+    type: object
+    description: "Common fields shared by experiment-specific blocks (calibration, relaxation, r1rho, cest, diffusion, ...)"
+    properties:
+      channel:
+        type: string
+        pattern: "^f[1-8]$"
+        description: "Spectrometer channel (f1-f8)"
+      power:
+        $ref: "#/$defs/parameter_value"
+      duration:
+        $ref: "#/$defs/parameter_value"
+      offset:
+        $ref: "#/$defs/parameter_value"
+      type:
+        type: string
+      model:
+        type: string
+
+type: object
+required:
+  - schema_version
+  - sequence_version
+  - title
+  - authors
+  - created
+  - last_modified
+  - repository
+  - status
+  - experiment_type
+
+properties:
+  schema_version:
+    type: string
+    pattern: "^\\d+\\.\\d+\\.\\d+$"
+    description: "Version of this annotation schema"
+
+  sequence_version:
+    type: string
+    pattern: "^\\d+\\.\\d+\\.\\d+$"
+    description: "Semantic version of the pulse sequence"
+
+  title:
+    type: string
+    minLength: 1
+    maxLength: 100
+    description: "Short, descriptive sequence name"
+
+  authors:
+    type: array
+    items:
+      oneOf:
+        - type: string
+          pattern: "^[^<]+<[^>]+>$"
+          description: "Author name with email: 'Name <email@domain.com>'"
+        - type: string
+          pattern: "^[^<>]+$"
+          minLength: 1
+          description: "Author name only (no email)"
+    minItems: 1
+    description: "List of sequence authors"
+
+  created:
+    type: string
+    pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+    description: "Creation date in YYYY-MM-DD format"
+
+  last_modified:
+    type: string
+    pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+    description: "Last modification date in YYYY-MM-DD format"
+
+  repository:
+    type: string
+    pattern: "^[a-zA-Z0-9._/-]+$"
+    description: "Repository identifier (e.g., github.com/user/repo)"
+
+  status:
+    type: string
+    enum: ["experimental", "beta", "stable", "deprecated"]
+    description: "Development/validation status"
+
+  experiment_type:
+    type: array
+    items:
+      type: string
+      enum:
+        - 1d
+        - 2d
+        - 3d
+        - cosy
+        - tocsy
+        - noesy
+        - hsqc
+        - hmqc
+        - trosy
+        - relaxation
+        - r1rho
+        - cest
+        - diffusion
+        - calibration
+        - solid_state
+    minItems: 1
+    description: "Array of experiment type keywords (see VOCABULARY.md)"
+
+  # Optional fields
+  features:
+    type: array
+    items:
+      type: string
+      minLength: 1
+    description: "Array of feature keywords (see VOCABULARY.md)"
+
+  typical_nuclei:
+    type: array
+    items:
+      oneOf:
+        - type: string
+          pattern: "^\\d+[A-Z][a-z]?$"
+          description: "Nucleus in standard isotope notation (e.g., 1H, 13C, 19F)"
+        - type: string
+          enum: ["nothing"]
+          description: "Placeholder for unused channel"
+    description: "Typical nuclei for this sequence, ordered by spectrometer channel (f1, f2, f3, ...). Use 'nothing' for unused channels."
+
+  description:
+    type: string
+    description: "Detailed description of the sequence"
+
+  citation:
+    type: array
+    items:
+      type: string
+      minLength: 1
+    description: "Literature citations"
+
+  doi:
+    type: array
+    items:
+      type: string
+      pattern: "^10\\..+/.+$"
+    description: "DOI identifiers for related publications"
+
+  dimensions:
+    type: array
+    items:
+      type: string
+      minLength: 1
+    description: "List of dimension identifiers using dotted path notation (e.g., relaxation.duration, f1). Format kept flexible for now."
+
+  acquisition_order:
+    type: array
+    items:
+      type: string
+      minLength: 1
+    description: "Acquisition loop order from innermost to outermost using dimension names"
+
+  reference_pulse:
+    type: array
+    items:
+      type: object
+      required: ["channel", "duration", "power"]
+      properties:
+        channel:
+          type: string
+          pattern: "^f[1-8]$"
+          description: "Spectrometer channel (f1-f8)"
+        duration:
+          type: string
+          pattern: "^p\\d+$"
+          description: "Pulse length parameter name (e.g., p1, p21)"
+        power:
+          type: string
+          pattern: "^pl\\d+$"
+          description: "Power parameter name (e.g., pl1, pl21)"
+    description: "Reference pulse calibrations for power calculations"
+
+  # Experiment-specific blocks. Each extends block_base; additional properties allowed
+  # so block-specific fields (e.g. diffusion.big_delta) don't need pre-declaration.
+  calibration:
+    allOf:
+      - $ref: "#/$defs/block_base"
+    type: object
+
+  relaxation:
+    allOf:
+      - $ref: "#/$defs/block_base"
+    type: object
+
+  r1rho:
+    allOf:
+      - $ref: "#/$defs/block_base"
+    type: object
+
+  cest:
+    allOf:
+      - $ref: "#/$defs/block_base"
+    type: object
+
+  diffusion:
+    allOf:
+      - $ref: "#/$defs/block_base"
+    type: object
+
+additionalProperties: true  # Allow community to add informal fields

@@ -16,7 +16,7 @@ def generate_schema_docs():
     if current_schema_path.is_symlink():
         schema_file = current_schema_path.resolve()
     else:
-        schema_file = schema_dir / "v0.0.1.yaml"
+        schema_file = schema_dir / "v0.0.3.yaml"
     
     if not schema_file.exists():
         print(f"Schema file {schema_file} not found")

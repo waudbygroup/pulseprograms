@@ -26,17 +26,17 @@ This repository provides a platform for the NMR community to share pulse sequenc
 ### Example Sequence Structure
 
 ```bruker
-;@ schema_version: "0.0.1"
-;@ sequence_version: "1.0.0"
+;@ schema_version: "0.0.3"
+;@ sequence_version: "1.1.0"
 ;@ title: SOFAST-HMQC
 ;@ experiment_type: [hmqc, 2d]
-;@ features: [sofast, sensitivity_enhancement, selective_excitation]
+;@ features: [sofast, states_tppi]
 ;@ typical_nuclei: [1H, 13C, 15N]
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@   - P. Schanda
 ;@ created: 2024-01-15
-;@ last_modified: 2025-08-15
+;@ last_modified: 2026-04-30
 ;@ repository: github.com/waudbylab/pulseprograms
 ;@ description: 1H,15N SOFAST-HMQC for rapid or sensitive measurements
 ;@ citation:
@@ -58,8 +58,8 @@ This repository provides a platform for the NMR community to share pulse sequenc
 │   ├── 15n_sofast
 │   └── 19f_r1rho_onres
 ├── schemas/               # YAML schema definitions
-│   ├── v0.0.1.yaml       # Current schema version
-│   └── current -> v0.0.1.yaml  # Symlink to current schema
+│   ├── v0.0.3.yaml       # Current schema version
+│   └── current -> v0.0.3.yaml  # Symlink to current schema
 ├── docs/                  # Documentation source files
 ├── .github/workflows/     # GitHub Actions for validation & deployment
 ├── CONTRIBUTING.md        # Contribution guidelines
@@ -88,11 +88,13 @@ Sequences include embedded YAML metadata using the `;@` comment prefix. This app
 
 **Optional:**
 - `features`: Array of feature keywords
-- `nuclei_hint`: Nuclei involved in the experiment
+- `typical_nuclei`: Typical nuclei used in the experiment, ordered by spectrometer channel
 - `description`: Detailed explanation
 - `citation`: Literature references
 - `doi`: Related publication DOIs
-- `status`: Development status (experimental/beta/stable/deprecated)
+- `dimensions`, `acquisition_order`: Indirect-dimension layout (dotted-path identifiers)
+- `reference_pulse`: List of reference pulse calibrations (channel/duration/power)
+- Experiment-specific blocks: `calibration`, `relaxation`, `r1rho`, `cest`, `diffusion`
 
 ### Controlled Vocabularies
 
@@ -121,7 +123,7 @@ Full documentation is available at [https://waudbylab.github.io/pulseprograms](h
 
 ### Schema Versioning
 - Follows semantic versioning (major.minor.patch)
-- Current version: 0.0.1
+- Current version: 0.0.3
 - Backwards compatibility maintained across minor versions
 
 ### Sequence Versioning

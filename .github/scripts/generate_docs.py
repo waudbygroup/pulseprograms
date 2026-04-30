@@ -157,10 +157,10 @@ class DocumentationGenerator:
                 md_content.append(f"- {features}")
             md_content.append("")
         
-        # 5. Nuclei Hint
-        if 'nuclei_hint' in metadata:
+        # 5. Typical nuclei
+        if 'typical_nuclei' in metadata:
             md_content.extend(["## Nuclei", ""])
-            nuclei = metadata['nuclei_hint']
+            nuclei = metadata['typical_nuclei']
             if isinstance(nuclei, list):
                 nuclei_badges = " ".join([f"`{n}`" for n in nuclei])
                 md_content.extend([nuclei_badges, ""])
@@ -203,7 +203,7 @@ class DocumentationGenerator:
         # 9. Other fields (any field not in the ordered list above)
         displayed_fields = {
             'title', 'sequence_version', 'status', 'last_modified', 'description', 
-            'experiment_type', 'features', 'nuclei_hint', 'authors', 'citation', 
+            'experiment_type', 'features', 'typical_nuclei', 'authors', 'citation',
             'doi', 'schema_version', 'created', 'repository'
         }
         
@@ -304,7 +304,7 @@ class DocumentationGenerator:
             title = metadata.get('title', seq_name)
             exp_type = ', '.join(metadata.get('experiment_type', [])) if isinstance(metadata.get('experiment_type'), list) else metadata.get('experiment_type', '')
             features = ', '.join(metadata.get('features', [])) if isinstance(metadata.get('features'), list) else metadata.get('features', '')
-            nuclei = ', '.join(metadata.get('nuclei_hint', [])) if isinstance(metadata.get('nuclei_hint'), list) else metadata.get('nuclei_hint', '')
+            nuclei = ', '.join(metadata.get('typical_nuclei', [])) if isinstance(metadata.get('typical_nuclei'), list) else metadata.get('typical_nuclei', '')
             status = metadata.get('status', '')
             version = metadata.get('sequence_version', '')
             

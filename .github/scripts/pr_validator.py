@@ -87,7 +87,7 @@ class PRValidator:
         """Load the current schema."""
         schema_file = Path("schemas/current")
         if not schema_file.exists():
-            schema_file = Path("schemas/v0.0.1.yaml")
+            schema_file = Path("schemas/v0.0.3.yaml")
         
         with open(schema_file, 'r') as f:
             return yaml.safe_load(f)
@@ -176,7 +176,7 @@ class PRValidator:
                 authors_value = f'[{author_name}]'
             
             complete_template = {
-                'schema_version': '"0.0.1"',
+                'schema_version': '"0.0.3"',
                 'sequence_version': '"0.1.0"',
                 'title': f'"{file_name}"',
                 'authors': authors_value,
@@ -246,7 +246,7 @@ class PRValidator:
                 return f'[{author_name}]'
         
         defaults = {
-            'schema_version': '"0.0.1"',
+            'schema_version': '"0.0.3"',
             'sequence_version': '"0.1.0"',
             'title': f'"{file_name}"',
             'created': f'"{date.today().isoformat()}"',
@@ -523,7 +523,7 @@ No sequence files were changed in this PR.
         comment += f"""
 ## 📚 Resources
 
-- **All optional fields:** See the [schema documentation](https://github.com/{self.repo_info['name']}/blob/main/schemas/v0.0.1.yaml) for complete field list
+- **All optional fields:** See the [schema documentation](https://github.com/{self.repo_info['name']}/blob/main/schemas/current) for complete field list
 - **Contributing guide:** Check [CONTRIBUTING.md](https://github.com/{self.repo_info['name']}/blob/main/CONTRIBUTING.md) for detailed instructions
 - **Examples:** Browse existing sequences for annotation patterns
 

@@ -1,5 +1,5 @@
-;@ schema_version: "0.0.2"
-;@ sequence_version: "0.1.2"
+;@ schema_version: "0.0.3"
+;@ sequence_version: "0.1.3"
 ;@ title: 19F R1
 ;@ description: |
 ;@   1D 19F R1 measurement
@@ -9,7 +9,7 @@
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2024-05-21
-;@ last_modified: 2025-12-04
+;@ last_modified: 2026-04-30
 ;@ repository: github.com/waudbylab/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [relaxation, 1d]

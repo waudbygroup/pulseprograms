@@ -1,5 +1,5 @@
-;@ schema_version: "0.0.2"
-;@ sequence_version: "0.1"
+;@ schema_version: "0.0.3"
+;@ sequence_version: "0.1.1"
 ;@ title: 19F R2 (CPMG)
 ;@ description: |
 ;@   1D 19F broadband R2 (CPMG) measurement
@@ -10,7 +10,7 @@
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2025-12-10
-;@ last_modified: 2025-12-10
+;@ last_modified: 2026-04-30
 ;@ repository: github.com/waudbylab/pulseprograms
 ;@ status: beta
 ;@ experiment_type: [relaxation, 1d]

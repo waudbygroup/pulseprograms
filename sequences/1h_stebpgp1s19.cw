@@ -1,5 +1,5 @@
-;@ schema_version: "0.0.2"
-;@ sequence_version: "2.0.1"
+;@ schema_version: "0.0.3"
+;@ sequence_version: "2.0.2"
 ;@ title: 1H STE diffusion
 ;@ description: |
 ;@   1H STE diffusion measurement
@@ -10,7 +10,7 @@
 ;@ authors:
 ;@   - Chris Waudby <c.waudby@ucl.ac.uk>
 ;@ created: 2020-09-04
-;@ last_modified: 2025-11-15
+;@ last_modified: 2026-04-30
 ;@ repository: github.com/waudbylab/pulseprograms
 ;@ status: experimental
 ;@ experiment_type: [diffusion, 1d]

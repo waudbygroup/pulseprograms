@@ -1,5 +1,5 @@
-;@ schema_version: "0.0.2"
-;@ sequence_version: "1.0.1"
+;@ schema_version: "0.0.3"
+;@ sequence_version: "1.0.2"
 ;@ title: SOFAST-HMQC
 ;@ description: |
 ;@   1H,15N SOFAST-HMQC
@@ -13,7 +13,7 @@
 ;@ doi:
 ;@   - 10.1021/ja051306e
 ;@ created: 2024-01-15
-;@ last_modified: 2025-11-15
+;@ last_modified: 2026-04-30
 ;@ repository: github.com/waudbylab/pulseprograms
 ;@ status: stable
 ;@ experiment_type: [hmqc, 2d]

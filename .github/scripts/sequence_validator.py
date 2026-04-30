@@ -88,7 +88,7 @@ def validate_against_schema():
             schema_content = yaml.safe_load(f)
     except FileNotFoundError:
         try:
-            with open('schemas/v0.0.1.yaml', 'r') as f:
+            with open('schemas/v0.0.3.yaml', 'r') as f:
                 schema_content = yaml.safe_load(f)
         except FileNotFoundError:
             print("Error: No schema file found")

@@ -1,11 +1,11 @@
-;@ schema_version: "0.0.2"
-;@ sequence_version: "0.2.0"
+;@ schema_version: "0.0.3"
+;@ sequence_version: "1.0.0"
 ;@ title: 19F on-resonance R1rho relaxation dispersion
 ;@ description: |
 ;@   On-resonance 19F R1rho (pseudo-3D)
 ;@
 ;@   - set SL durations in VPLIST
-;@   - set SL power levels in VALIST !in Watt!
+;@   - set SL power levels in VALIST !!! in Watts !!!
 ;@   - with temperature compensation
 ;@   - use '-DHDEC' for 1H decoupling during acquisition
 ;@   - tested with Topspin 3.8.0 and 4.5.0
@@ -18,9 +18,9 @@
 ;@ doi:
 ;@   - 10.26434/chemrxiv-2025-vt1wg
 ;@ created: 2020-01-01
-;@ last_modified: 2026-03-06
+;@ last_modified: 2026-04-30
 ;@ repository: github.com/waudbylab/pulseprograms
-;@ status: beta
+;@ status: stable
 ;@ experiment_type: [r1rho, 1d]
 ;@ features: [relaxation_dispersion, on_resonance, temperature_compensation]
 ;@ typical_nuclei: [19F, 1H]
@@ -29,7 +29,7 @@
 ;@ reference_pulse:
 ;@ - {channel: f1, duration: p1, power: pl1}
 ;@ - {channel: f2, duration: p3, power: pl2}
-;@ r1rho: {channel: f1, power: powerlist, duration: taulist, offset: 0, alignment: hard_pulse}
+;@ r1rho: {channel: f1, power: powerlist, duration: taulist, offset: 0}
 
 
 /*--------------------------------
