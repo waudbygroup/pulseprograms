@@ -115,139 +115,73 @@ class DocumentationGenerator:
     def generate_sequence_page(self, seq_name: str, metadata: Dict[str, Any]) -> str:
         """Generate markdown page for a single sequence."""
         title = metadata.get('title', seq_name)
-        
+
         md_content = [f"# {title}", ""]
-        
-        # 1.5. Version, status, last modified (compact info box)
+
+        # Compact info line: version, status, last_modified, jump-to-source link
         info_items = []
         if 'sequence_version' in metadata:
-            info_items.append(f"**Version:** {metadata['sequence_version']}")
+            info_items.append(f"**Version** {metadata['sequence_version']}")
         if 'status' in metadata:
             status_emoji = {"experimental": "🧪", "beta": "🔬", "stable": "✅", "deprecated": "⚠️"}
             emoji = status_emoji.get(metadata['status'], "")
-            info_items.append(f"**Status:** {emoji} {metadata['status']}")
+            info_items.append(f"**Status** {emoji} {metadata['status']}")
         if 'last_modified' in metadata:
-            info_items.append(f"**Last Modified:** {metadata['last_modified']}")
-        
-        if info_items:
-            md_content.extend(["> " + " • ".join(info_items), ""])
-        
-        # 2. Description
+            info_items.append(f"**Modified** {metadata['last_modified']}")
+        info_items.append("[**Jump to source ↓**](#source-code)")
+        md_content.extend([" · ".join(info_items), ""])
+
+        # Description (no heading — keep tight)
         if 'description' in metadata:
-            md_content.extend(["## Description", "", metadata['description'], ""])
-        
-        # 3. Experiment Type
+            md_content.extend([metadata['description'].rstrip(), ""])
+
+        # Compact summary table: experiment type / features / nuclei / authors / citations / DOIs
+        summary_rows = []
+
+        def _list_or_str(val, sep=", "):
+            if isinstance(val, list):
+                return sep.join(str(v) for v in val)
+            return str(val)
+
         if 'experiment_type' in metadata:
-            md_content.extend(["## Experiment Type", ""])
-            exp_types = metadata['experiment_type']
-            if isinstance(exp_types, list):
-                type_badges = " ".join([f"`{t}`" for t in exp_types])
-                md_content.extend([type_badges, ""])
-            else:
-                md_content.extend([f"`{exp_types}`", ""])
-        
-        # 4. Features
-        if 'features' in metadata:
-            md_content.extend(["## Features", ""])
-            features = metadata['features']
-            if isinstance(features, list):
-                for feature in features:
-                    md_content.append(f"- {feature}")
-            else:
-                md_content.append(f"- {features}")
-            md_content.append("")
-        
-        # 5. Typical nuclei
+            summary_rows.append(("Type", _list_or_str(metadata['experiment_type'])))
         if 'typical_nuclei' in metadata:
-            md_content.extend(["## Nuclei", ""])
-            nuclei = metadata['typical_nuclei']
-            if isinstance(nuclei, list):
-                nuclei_badges = " ".join([f"`{n}`" for n in nuclei])
-                md_content.extend([nuclei_badges, ""])
-            else:
-                md_content.extend([f"`{nuclei}`", ""])
-        
-        # 6. Authors
+            summary_rows.append(("Nuclei", _list_or_str(metadata['typical_nuclei'])))
+        if 'features' in metadata and metadata['features']:
+            summary_rows.append(("Features", _list_or_str(metadata['features'])))
         if 'authors' in metadata:
-            md_content.extend(["## Authors", ""])
-            authors = metadata['authors']
-            if isinstance(authors, list):
-                for author in authors:
-                    md_content.append(f"- {author}")
-            else:
-                md_content.append(f"- {authors}")
-            md_content.append("")
-        
-        # 7. Citation
+            summary_rows.append(("Authors", _list_or_str(metadata['authors'], sep="; ")))
         if 'citation' in metadata:
-            md_content.extend(["## Citations", ""])
-            citations = metadata['citation']
-            if isinstance(citations, list):
-                for citation in citations:
-                    md_content.append(f"- {citation}")
-            else:
-                md_content.append(f"- {citations}")
-            md_content.append("")
-        
-        # 8. DOI
+            summary_rows.append(("Citation", _list_or_str(metadata['citation'], sep="; ")))
         if 'doi' in metadata:
-            md_content.extend(["## DOI Links", ""])
-            dois = metadata['doi']
-            if isinstance(dois, list):
-                for doi in dois:
-                    md_content.append(f"- [{doi}](https://doi.org/{doi})")
-            else:
-                md_content.append(f"- [{dois}](https://doi.org/{dois})")
+            dois = metadata['doi'] if isinstance(metadata['doi'], list) else [metadata['doi']]
+            doi_links = "; ".join([f"[{d}](https://doi.org/{d})" for d in dois])
+            summary_rows.append(("DOI", doi_links))
+
+        if summary_rows:
+            md_content.append("| | |")
+            md_content.append("|---|---|")
+            for k, v in summary_rows:
+                md_content.append(f"| **{k}** | {v} |")
             md_content.append("")
-        
-        # 9. Other fields (any field not in the ordered list above)
-        displayed_fields = {
-            'title', 'sequence_version', 'status', 'last_modified', 'description', 
+
+        # Structural fields (dimensions/acquisition_order/reference_pulse + experiment-specific blocks)
+        # Rendered compactly as a definition-list-like table; excludes git/file metadata.
+        excluded = {
+            'title', 'sequence_version', 'status', 'last_modified', 'description',
             'experiment_type', 'features', 'typical_nuclei', 'authors', 'citation',
-            'doi', 'schema_version', 'created', 'repository'
+            'doi', 'schema_version', 'created', 'repository',
+            '_git_history', '_file_path', '_file_name',
         }
-        
-        other_fields = {k: v for k, v in metadata.items() if k not in displayed_fields}
-        if other_fields:
-            md_content.extend(["## Additional Fields", ""])
-            md_content.extend([
-                "| Field | Value |",
-                "|-------|-------|"
-            ])
-            
-            for field, value in sorted(other_fields.items()):
-                field_name = field.replace('_', ' ').title()
-                
-                if isinstance(value, list):
-                    if not value:  # Empty list
-                        formatted_value = "*empty*"
-                    elif isinstance(value[0], dict):  # List of objects
-                        formatted_items = []
-                        for item in value:
-                            item_parts = [f"{k}: {v}" for k, v in item.items()]
-                            formatted_items.append("{" + ", ".join(item_parts) + "}")
-                        formatted_value = "<br>".join(formatted_items)
-                    else:  # Simple list
-                        formatted_value = "<br>".join([str(item) for item in value])
-                elif isinstance(value, dict):  # Single object
-                    item_parts = [f"{k}: {v}" for k, v in value.items()]
-                    formatted_value = "{" + ", ".join(item_parts) + "}"
-                else:  # Simple value
-                    formatted_value = str(value)
-                
-                md_content.append(f"| {field_name} | {formatted_value} |")
-            
+        structural = {k: v for k, v in metadata.items() if k not in excluded}
+
+        if structural:
+            md_content.extend(["## Structure", "", "| Field | Value |", "|---|---|"])
+            for field, value in structural.items():
+                field_name = field.replace('_', ' ')
+                md_content.append(f"| {field_name} | {self._format_value(value)} |")
             md_content.append("")
-        
-        # 10. Schema version and metadata info (at the end)
-        md_content.extend(["---", ""])
-        if 'created' in metadata:
-            md_content.append(f"*Created: {metadata['created']}*")
-        if 'repository' in metadata:
-            md_content.append(f"*Repository: {metadata['repository']}*") 
-        if 'schema_version' in metadata:
-            md_content.append(f"*Schema version: {metadata['schema_version']}*")
-        
+
         # Source code
         sequence_file_path = Path("sequences") / seq_name
         if sequence_file_path.exists():
@@ -255,30 +189,53 @@ class DocumentationGenerator:
                 with open(sequence_file_path, 'r', encoding='utf-8') as f:
                     source_content = f.read()
                 md_content.extend(["## Source Code", ""])
-                
-                # Add GitHub link if repository info available
                 if 'repository' in metadata:
                     repo = metadata['repository']
-                    md_content.append(f"View on GitHub: [{repo}/sequences/{seq_name}](https://{repo}/blob/main/sequences/{seq_name})")
-                    md_content.append("")
-                
-                md_content.extend([
-                    "```bruker",
-                    source_content.rstrip(),
-                    "```",
-                    ""
-                ])
+                    md_content.extend([
+                        f"[View on GitHub](https://{repo}/blob/main/sequences/{seq_name})",
+                        "",
+                    ])
+                md_content.extend(["```bruker", source_content.rstrip(), "```", ""])
             except Exception as e:
                 print(f"Warning: Could not read source file {sequence_file_path}: {e}")
-        
-        # Git history / changelog
-        if '_git_history' in metadata and metadata['_git_history']:
+
+        # Changelog (from git history)
+        if metadata.get('_git_history'):
             md_content.extend(["## Changelog", ""])
             for commit in metadata['_git_history']:
-                md_content.append(f"- **{commit['date']}** ({commit['hash']}): {commit['message']} - {commit['author']}")
-        
-        
+                md_content.append(
+                    f"- **{commit['date']}** ({commit['hash']}) — {commit['message']} — {commit['author']}"
+                )
+            md_content.append("")
+
+        # Footer: created / repo / schema version (one line, italic)
+        footer = []
+        if 'created' in metadata:
+            footer.append(f"Created {metadata['created']}")
+        if 'repository' in metadata:
+            footer.append(metadata['repository'])
+        if 'schema_version' in metadata:
+            footer.append(f"schema {metadata['schema_version']}")
+        if footer:
+            md_content.extend(["---", "", "*" + " · ".join(footer) + "*", ""])
+
         return '\n'.join(md_content)
+
+    @staticmethod
+    def _format_value(value):
+        """Format a metadata value for inline rendering inside a table cell."""
+        if isinstance(value, list):
+            if not value:
+                return "*empty*"
+            if isinstance(value[0], dict):
+                items = []
+                for item in value:
+                    items.append("{" + ", ".join(f"{k}: {v}" for k, v in item.items()) + "}")
+                return "<br>".join(items)
+            return ", ".join(str(item) for item in value)
+        if isinstance(value, dict):
+            return "{" + ", ".join(f"{k}: {v}" for k, v in value.items()) + "}"
+        return str(value)
     
     def generate_sequence_database(self) -> str:
         """Generate searchable sequence database page."""
